@@ -1,4 +1,6 @@
-This is your new Play 2.1 application
-=====================================
+Sample application to demonstrate play framework 2 with jpa
+===========================================================
 
-This file will be packaged with your application, when using `play dist`.
+Why?
+
+read more here: http://www.jensjaeger.com/2013/11/play-framework-2-ebean-vs-jpa/
