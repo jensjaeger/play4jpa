@@ -1,6 +1,7 @@
 package models;
 
 import play.db.jpa.JPA;
+import query.Query;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -24,9 +25,22 @@ public class Task extends Model {
 
     public boolean done;
 
-    public static Task findByName(String name){
+    /**
+     * Sample method to demonstrate how to find a
+     */
+    public static Task findByNameWithJpa(String name){
         return JPA.em().createQuery("from models.Task where name = :name", Task.class)
                        .setParameter("name", name)
                        .getSingleResult();
     }
+
+    public static Query<Task> query(){
+        return query(Task.class, String.class);
+    }
+
+    public static Task findByName(String name){
+        return Task.query().eq("name", name).findUnique();
+    }
+
+
 }

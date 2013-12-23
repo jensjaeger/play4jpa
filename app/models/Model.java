@@ -1,45 +1,24 @@
 package models;
 
-import customplay.db.Db;
-import play.db.jpa.JPA;
+import query.Query;
 
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
 import javax.persistence.MappedSuperclass;
 
 /**
- * BaseModel contains generic JPA methods.
+ * Adds a Long generatedValue id to the model.
  *
  * @author Jens (mail@jensjaeger.com)
  */
 @MappedSuperclass
-public class Model {
+public abstract class Model<T extends Model<T>> extends GenericModel<T> {
 
-    /**
-     * Update this Model.
-     */
-    public final void update() {
-        if (!JPA.em().contains(this)) {
-            throw new IllegalStateException("Object not in persistence context! Call save for new objects");
-        }
-        JPA.em().merge(this);
-        Db.setCommitNeeded();
-    }
+    @Id
+    @GeneratedValue
+    public Long id;
 
-    /**
-     * Insert a new Model or update an existing one.
-     */
-    public final void save() {
-        if (JPA.em().contains(this)) {
-            throw new IllegalStateException("Object already in persistence context! Call update for existing objects");
-        }
-        JPA.em().persist(this);
-        Db.setCommitNeeded();
-    }
-
-    /**
-     * Removes this Model from the database.
-     */
-    public final void delete() {
-        play.db.jpa.JPA.em().remove(this);
-        Db.setCommitNeeded();
+    protected static final <T extends GenericModel<T>> Query<T> query(Class<T> entityClass) {
+        return GenericModel.query(entityClass, Long.class);
     }
 }
