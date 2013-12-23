@@ -1,5 +1,6 @@
 package customplay.db;
 
+import play.libs.F;
 import play.mvc.*;
 import play.mvc.Http.*;
 
@@ -11,13 +12,13 @@ import play.mvc.Http.*;
 public class TxAction extends Action<Tx>{
 
     @Override
-    public Result call(final Context ctx) throws Throwable {
+    public play.libs.F.Promise<play.mvc.SimpleResult> call(final Context ctx) throws Throwable {
         return Db.withTx(
                 configuration.value(),
                 configuration.readOnly(),
-                new play.libs.F.Function0<Result>() {
+                new play.libs.F.Function0<F.Promise<SimpleResult>>() {
                     @Override
-                    public Result apply() throws Throwable {
+                    public F.Promise<SimpleResult> apply() throws Throwable {
                         return delegate.call(ctx);
                     }
                 }

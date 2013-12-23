@@ -52,7 +52,6 @@ public class Db extends play.db.jpa.JPA {
         EntityManager em = null;
         EntityTransaction tx = null;
         try {
-
             em = play.db.jpa.JPA.em(name);
             play.db.jpa.JPA.bindForCurrentThread(em);
             bindNeedsCommitToThread();
@@ -72,9 +71,7 @@ public class Db extends play.db.jpa.JPA {
                     tx.rollback();
                 }
             }
-
             return result;
-
         }
         catch (Throwable t) {
             if (tx != null && tx.isActive()) {
