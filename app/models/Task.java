@@ -35,7 +35,7 @@ public class Task extends Model {
     }
 
     public static Query<Task> query(){
-        return query(Task.class, String.class);
+        return query(Task.class);
     }
 
     public static Task findByName(String name){
