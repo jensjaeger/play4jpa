@@ -14,8 +14,15 @@ object ApplicationBuild extends Build {
     "org.hibernate" % "hibernate-entitymanager" % "4.2.7.Final"
   )
 
-  val main = play.Project(appName, appVersion, appDependencies).settings(
-    // Add your own project settings here      
+  lazy val fixy = play.Project(
+    appName + "-fixy",
+    appVersion,
+    appDependencies,
+    path = file("module/fixy")
+
   )
+
+  val main = play.Project(appName, appVersion, appDependencies).settings(
+  ).dependsOn(fixy).aggregate(fixy)
 
 }
