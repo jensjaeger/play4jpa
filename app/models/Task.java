@@ -7,6 +7,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import java.util.List;
 
 /**
  * Model to handle tasks
@@ -42,5 +43,7 @@ public class Task extends Model {
         return Task.query().eq("name", name).findUnique();
     }
 
-
+    public static List<Task> findAll(){
+        return Task.query().findList();
+    }
 }
