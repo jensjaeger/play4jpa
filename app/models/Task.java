@@ -3,10 +3,7 @@ package models;
 import play.db.jpa.JPA;
 import query.Query;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
+import javax.persistence.*;
 import java.util.List;
 
 /**
@@ -17,14 +14,13 @@ import java.util.List;
 @Entity(name = "tasks")
 public class Task extends Model {
 
-    @Id
-    @GeneratedValue
-    public Long id;
-
     //@Column(unique=true)
     public String name;
 
     public boolean done;
+
+    @ManyToOne
+    public User creator;
 
     /**
      * Sample method to demonstrate how to find a
@@ -46,4 +42,5 @@ public class Task extends Model {
     public static List<Task> findAll(){
         return Task.query().findList();
     }
+
 }
