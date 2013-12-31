@@ -23,9 +23,9 @@ public class Task extends Model {
     public User creator;
 
     /**
-     * Sample method to demonstrate how to find a
+     * Sample method to demonstrate how to do find with Hql
      */
-    public static Task findByNameWithJpa(String name){
+    public static Task findByNameWithHql(String name){
         return JPA.em().createQuery("from models.Task where name = :name", Task.class)
                        .setParameter("name", name)
                        .getSingleResult();
@@ -39,8 +39,11 @@ public class Task extends Model {
         return Task.query().eq("name", name).findUnique();
     }
 
+    public static List<Task> findByCreatorName(String creatorName){
+        return Task.query().join("creator").eq("creator.name", creatorName).findList();
+    }
+
     public static List<Task> findAll(){
         return Task.query().findList();
     }
-
 }

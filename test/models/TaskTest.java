@@ -25,4 +25,10 @@ public class TaskTest extends ModelTest {
         Task task = Task.findByName("Task 1");
         assertEquals("Task 1", task.name);
     }
+
+    @Test
+    public void testFindByCreatorName(){
+        List<Task> tasks = Task.findByCreatorName("jens");
+        assertEquals(2, tasks.size());
+    }
 }
