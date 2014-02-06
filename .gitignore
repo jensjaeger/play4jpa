@@ -5,3 +5,8 @@ dist/project/target
 dist/project/project
 dist/target
 dist/module/fixy/target
+samples/.settings
+samples/project/target
+samples/.idea_modules
+samples/project/project
+samples/target
