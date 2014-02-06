@@ -19,7 +19,6 @@ object ApplicationBuild extends Build {
     appVersion,
     appDependencies,
     path = file("module/fixy")
-
   )
 
   val main = play.Project(appName, appVersion, appDependencies).settings(
