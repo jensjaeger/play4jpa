@@ -1,0 +1,7 @@
+.idea
+dist/.idea_modules
+dist/.settings
+dist/project/target
+dist/project/project
+dist/target
+dist/module/fixy/target
