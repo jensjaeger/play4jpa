@@ -1,6 +1,7 @@
 package models;
 
-import query.Query;
+import play.ext.jj.jpa.models.Model;
+import play.ext.jj.jpa.query.Query;
 
 import javax.persistence.Entity;
 
@@ -16,11 +17,11 @@ public class User extends Model<User> {
 
     public String email;
 
-    public static Query<User> query(){
+    public static Query<User> query() {
         return query(User.class);
     }
 
-    public static User findByEmail(String email){
+    public static User findByEmail(String email) {
         return query().eq("email", email).findUnique();
     }
 }

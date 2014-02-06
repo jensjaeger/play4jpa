@@ -4,24 +4,16 @@ import play.Project._
 
 object ApplicationBuild extends Build {
 
-  val appName         = "play4jpa"
+  val appName         = "play4jpa-sample"
   val appVersion      = "1.0-SNAPSHOT"
 
   val appDependencies = Seq(
     javaCore,
-    javaJdbc,
-    javaJpa,
-    "org.hibernate" % "hibernate-entitymanager" % "4.2.7.Final"
-  )
-
-  lazy val fixy = play.Project(
-    appName + "-fixy",
-    appVersion,
-    appDependencies,
-    path = file("module/fixy")
+    "play4jpa" % "play4jpa_2.10" % "1.0-SNAPSHOT"
   )
 
   val main = play.Project(appName, appVersion, appDependencies).settings(
-  ).dependsOn(fixy).aggregate(fixy)
+    resolvers += "Local Play Repository" at "file://usr/local/Cellar/play/2.2.1/libexec/repository/local"
+  )
 
 }

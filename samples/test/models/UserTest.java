@@ -1,6 +1,5 @@
 package models;
 
-import helper.ModelTest;
 import org.junit.Test;
 
 import java.util.Arrays;

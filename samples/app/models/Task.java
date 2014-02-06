@@ -1,9 +1,11 @@
 package models;
 
 import play.db.jpa.JPA;
-import query.Query;
+import play.ext.jj.jpa.models.Model;
+import play.ext.jj.jpa.query.Query;
 
-import javax.persistence.*;
+import javax.persistence.Entity;
+import javax.persistence.ManyToOne;
 import java.util.List;
 
 /**
@@ -12,7 +14,7 @@ import java.util.List;
  * @author Jens (mail@jensjaeger.com)
  */
 @Entity(name = "tasks")
-public class Task extends Model {
+public class Task extends Model<Task> {
 
     //@Column(unique=true)
     public String name;
