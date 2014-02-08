@@ -7,6 +7,7 @@ import org.hibernate.ejb.HibernateEntityManager;
 import org.hibernate.sql.JoinType;
 import org.hibernate.type.TypeResolver;
 import play.db.jpa.JPA;
+import play.ext.jj.jpa.models.Query;
 
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
@@ -19,7 +20,7 @@ import java.util.*;
  * @param <T> Entity type
  * @author Jens (mail@jensjaeger.com)
  */
-public class Query<T> implements Iterable<T> {
+public class LegacyQuery<T> implements Iterable<T>, Query<T> {
     /**
      * Maximum number of elements in IN statement, before another in statement is added to the query.
      */
@@ -49,15 +50,15 @@ public class Query<T> implements Iterable<T> {
      */
     private boolean orderAdded;
 
-    public Query(Class<T> type, String alias) {
+    public LegacyQuery(Class<T> type, String alias) {
         this(type, alias, DetachedCriteria.forClass(type, alias));
     }
 
-    protected Query(Query<T> query) {
+    protected LegacyQuery(LegacyQuery<T> query) {
         this(query.type, query.alias, query.detachedCriteria);
     }
 
-    protected Query(Class<T> type, String alias, DetachedCriteria criteria) {
+    protected LegacyQuery(Class<T> type, String alias, DetachedCriteria criteria) {
         this.type = type;
         this.alias = alias;
         this.aliasDot = alias + ".";
@@ -65,12 +66,14 @@ public class Query<T> implements Iterable<T> {
         this.maxResults = 0;
     }
 
+    @Override
     @SuppressWarnings("unchecked")
     public final T byId(Object id) {
         detachedCriteria.add(Restrictions.idEq(id));
         return (T) executableCriteria().uniqueResult();
     }
 
+    @Override
     @SuppressWarnings("unchecked")
     public final T byNaturalId(String field, Object id) {
         detachedCriteria.add(Restrictions.naturalId().set(field, id));
@@ -84,12 +87,14 @@ public class Query<T> implements Iterable<T> {
      * @param value The value to compare
      * @return this (for method chaining)
      */
-    public final Query<T> eq(String field, Object value) {
+    @Override
+    public final LegacyQuery<T> eq(String field, Object value) {
         detachedCriteria.add(Restrictions.eq(field, value));
         return this;
     }
 
-    public final Query<T> eq(String field, Property value) {
+    @Override
+    public final LegacyQuery<T> eq(String field, Property value) {
         detachedCriteria.add(Restrictions.eqProperty(field, value.fullname));
         return this;
     }
@@ -101,7 +106,8 @@ public class Query<T> implements Iterable<T> {
      * @param value The value to compare
      * @return this (for method chaining)
      */
-    public final Query<T> ieq(String field, String value) {
+    @Override
+    public final LegacyQuery<T> ieq(String field, String value) {
         detachedCriteria.add(Restrictions.eq(field, value).ignoreCase());
         return this;
     }
@@ -113,12 +119,14 @@ public class Query<T> implements Iterable<T> {
      * @param value The value to compare
      * @return this (for method chaining)
      */
-    public final Query<T> ne(String field, Object value) {
+    @Override
+    public final LegacyQuery<T> ne(String field, Object value) {
         detachedCriteria.add(Restrictions.ne(field, value));
         return this;
     }
 
-    public final Query<T> ne(String field, Property value) {
+    @Override
+    public final LegacyQuery<T> ne(String field, Property value) {
         detachedCriteria.add(Restrictions.neProperty(field, value.fullname));
         return this;
     }
@@ -130,7 +138,8 @@ public class Query<T> implements Iterable<T> {
      * @param value The value to compare
      * @return this (for method chaining)
      */
-    public final Query<T> ilike(String field, String value) {
+    @Override
+    public final LegacyQuery<T> ilike(String field, String value) {
         detachedCriteria.add(Restrictions.ilike(field, value));
         return this;
     }
@@ -142,12 +151,14 @@ public class Query<T> implements Iterable<T> {
      * @param value The value to compare
      * @return this (for method chaining)
      */
-    public final Query<T> ge(String field, Object value) {
+    @Override
+    public final LegacyQuery<T> ge(String field, Object value) {
         detachedCriteria.add(Restrictions.ge(field, value));
         return this;
     }
 
-    public final Query<T> ge(String field, Property value) {
+    @Override
+    public final LegacyQuery<T> ge(String field, Property value) {
         detachedCriteria.add(Restrictions.geProperty(field, value.fullname));
         return this;
     }
@@ -159,12 +170,14 @@ public class Query<T> implements Iterable<T> {
      * @param value The value to compare
      * @return this (for method chaining)
      */
-    public final Query<T> gt(String field, Object value) {
+    @Override
+    public final LegacyQuery<T> gt(String field, Object value) {
         detachedCriteria.add(Restrictions.gt(field, value));
         return this;
     }
 
-    public final Query<T> gt(String field, Property value) {
+    @Override
+    public final LegacyQuery<T> gt(String field, Property value) {
         detachedCriteria.add(Restrictions.gtProperty(field, value.fullname));
         return this;
     }
@@ -176,12 +189,14 @@ public class Query<T> implements Iterable<T> {
      * @param value The value to compare
      * @return this (for method chaining)
      */
-    public final Query<T> le(String field, Object value) {
+    @Override
+    public final LegacyQuery<T> le(String field, Object value) {
         detachedCriteria.add(Restrictions.le(field, value));
         return this;
     }
 
-    public final Query<T> le(String field, Property value) {
+    @Override
+    public final LegacyQuery<T> le(String field, Property value) {
         detachedCriteria.add(Restrictions.leProperty(field, value.fullname));
         return this;
     }
@@ -193,12 +208,14 @@ public class Query<T> implements Iterable<T> {
      * @param value The value to compare
      * @return this (for method chaining)
      */
-    public final Query<T> lt(String field, Object value) {
+    @Override
+    public final LegacyQuery<T> lt(String field, Object value) {
         detachedCriteria.add(Restrictions.lt(field, value));
         return this;
     }
 
-    public final Query<T> lt(String field, Property value) {
+    @Override
+    public final LegacyQuery<T> lt(String field, Property value) {
         detachedCriteria.add(Restrictions.ltProperty(field, value.fullname));
         return this;
     }
@@ -211,7 +228,8 @@ public class Query<T> implements Iterable<T> {
      * @param hi
      * @return this (for method chaining)
      */
-    public final Query<T> between(String field, Object lo, Object hi) {
+    @Override
+    public final LegacyQuery<T> between(String field, Object lo, Object hi) {
         if (lo instanceof Property || hi instanceof Property) {
             throw new IllegalArgumentException("Properties are not allowed as arguments for 'between'!");
         }
@@ -225,12 +243,14 @@ public class Query<T> implements Iterable<T> {
      * @param field The field name
      * @return this (for method chaining)
      */
-    public final Query<T> isNull(String field) {
+    @Override
+    public final LegacyQuery<T> isNull(String field) {
         detachedCriteria.add(Restrictions.isNull(field));
         return this;
     }
 
-    public final Query<T> isNull(Property field) {
+    @Override
+    public final LegacyQuery<T> isNull(Property field) {
         detachedCriteria.add(Restrictions.isNull(field.fullname));
         return this;
     }
@@ -241,12 +261,14 @@ public class Query<T> implements Iterable<T> {
      * @param field The field name
      * @return this (for method chaining)
      */
-    public final Query<T> isNotNull(String field) {
+    @Override
+    public final LegacyQuery<T> isNotNull(String field) {
         detachedCriteria.add(Restrictions.isNotNull(field));
         return this;
     }
 
-    public final Query<T> isNotNull(Property field) {
+    @Override
+    public final LegacyQuery<T> isNotNull(Property field) {
         detachedCriteria.add(Restrictions.isNotNull(field.fullname));
         return this;
     }
@@ -257,11 +279,12 @@ public class Query<T> implements Iterable<T> {
      * @param sql        Native sql to add
      * @param parameters Parameters for the native sql
      * @return this (for method chaining)
-     * @deprecated This method should not be used due to native SQL. Use the criteria api provided by this {@link Query}
+     * @deprecated This method should not be used due to native SQL. Use the criteria api provided by this {@link LegacyQuery}
      * class.
      */
+    @Override
     @Deprecated
-    public final Query<T> sqlRestriction(String sql, Object... parameters) {
+    public final LegacyQuery<T> sqlRestriction(String sql, Object... parameters) {
         if (parameters.length > 0) {
             Object[] values = parameters;
             org.hibernate.type.Type[] types = new org.hibernate.type.Type[parameters.length];
@@ -275,17 +298,20 @@ public class Query<T> implements Iterable<T> {
         return this;
     }
 
-    public final Query<T> or(Criterion... predicates) {
+    @Override
+    public final LegacyQuery<T> or(Criterion... predicates) {
         detachedCriteria.add(Restrictions.or(predicates));
         return this;
     }
 
-    public final Query<T> and(Criterion... predicates) {
+    @Override
+    public final LegacyQuery<T> and(Criterion... predicates) {
         detachedCriteria.add(Restrictions.and(predicates));
         return this;
     }
 
-    public final Query<T> in(String field, Collection<?> values) {
+    @Override
+    public final LegacyQuery<T> in(String field, Collection<?> values) {
         if (values == null || values.isEmpty()) {
             detachedCriteria.add(Restrictions.sqlRestriction("1=0"));
         } else if (values.size() > IN_LIMIT) {
@@ -302,7 +328,7 @@ public class Query<T> implements Iterable<T> {
         return this;
     }
 
-    private final Criterion inCriterion(String field, Query<?> subQuery, Projection projection) {
+    private final Criterion inCriterion(String field, LegacyQuery<?> subQuery, Projection projection) {
         if (subQuery == this) {
             throw new IllegalArgumentException("Cannot use THIS as subquery!");
         }
@@ -319,7 +345,8 @@ public class Query<T> implements Iterable<T> {
      * @param subQuery The sub query
      * @return this (for method chaining)
      */
-    public final Query<T> in(Query<?> subQuery) {
+    @Override
+    public final LegacyQuery<T> in(LegacyQuery<?> subQuery) {
         detachedCriteria.add(inCriterion("id", subQuery, Projections.id()));
         return this;
     }
@@ -332,12 +359,14 @@ public class Query<T> implements Iterable<T> {
      * @param subQuery The sub query
      * @return this (for method chaining)
      */
-    public final Query<T> in(String field, Query<?> subQuery, String subField) {
+    @Override
+    public final LegacyQuery<T> in(String field, LegacyQuery<?> subQuery, String subField) {
         detachedCriteria.add(inCriterion(field, subQuery, Projections.property(subField)));
         return this;
     }
 
-    public final Query<T> notIn(String field, Collection<?> values) {
+    @Override
+    public final LegacyQuery<T> notIn(String field, Collection<?> values) {
         if (values != null && !values.isEmpty()) {
             if (values.size() > IN_LIMIT) {
                 // Split into multiple "NOT IN" restrictions if there are too many values
@@ -360,7 +389,8 @@ public class Query<T> implements Iterable<T> {
      * @param subQuery The sub query
      * @return this (for method chaining)
      */
-    public final Query<T> notIn(Query<?> subQuery) {
+    @Override
+    public final LegacyQuery<T> notIn(LegacyQuery<?> subQuery) {
         detachedCriteria.add(Restrictions.not(inCriterion("id", subQuery, Projections.id())));
         return this;
     }
@@ -373,7 +403,8 @@ public class Query<T> implements Iterable<T> {
      * @param subQuery The sub query
      * @return this (for method chaining)
      */
-    public final Query<T> notIn(String field, Query<?> subQuery, String subField) {
+    @Override
+    public final LegacyQuery<T> notIn(String field, LegacyQuery<?> subQuery, String subField) {
         detachedCriteria.add(Restrictions.not(inCriterion(field, subQuery, Projections.property(subField))));
         return this;
     }
@@ -384,7 +415,8 @@ public class Query<T> implements Iterable<T> {
      * @param associated Path to join
      * @return this (for method chaining)
      */
-    public final Query<T> leftJoin(String associated) {
+    @Override
+    public final LegacyQuery<T> leftJoin(String associated) {
         final String alias = associated.replaceAll("\\.", "_");
         if (!aliases.contains(alias)) {
             detachedCriteria.createAlias(associated, alias, JoinType.LEFT_OUTER_JOIN);
@@ -399,7 +431,8 @@ public class Query<T> implements Iterable<T> {
      * @param associated Path to join
      * @return this (for method chaining)
      */
-    public final Query<T> join(String associated) {
+    @Override
+    public final LegacyQuery<T> join(String associated) {
         final String alias = associated.replaceAll("\\.", "_");
         if (!aliases.contains(alias)) {
             detachedCriteria.createAlias(associated, alias);
@@ -408,7 +441,8 @@ public class Query<T> implements Iterable<T> {
         return this;
     }
 
-    public final Query<T> exists(Query<T> subQuery) {
+    @Override
+    public final LegacyQuery<T> exists(LegacyQuery<T> subQuery) {
         if (subQuery == this) {
             throw new IllegalArgumentException("Cannot use THIS as subquery!");
         }
@@ -418,7 +452,8 @@ public class Query<T> implements Iterable<T> {
         return this;
     }
 
-    public final Query<T> notExists(Query<T> subQuery) {
+    @Override
+    public final LegacyQuery<T> notExists(LegacyQuery<T> subQuery) {
         if (subQuery == this) {
             throw new IllegalArgumentException("Cannot use THIS as subquery!");
         }
@@ -429,12 +464,14 @@ public class Query<T> implements Iterable<T> {
     }
 
 
+    @Override
     @SuppressWarnings("unchecked")
     public final List<T> findList() {
         beforeExecute();
         return executableCriteria().list();
     }
 
+    @Override
     @SuppressWarnings("unchecked")
     public final T findUnique() {
         beforeExecute();
@@ -445,6 +482,7 @@ public class Query<T> implements Iterable<T> {
      * Find count of all rows = count(*).<br>
      * Be aware that this method does count all rows and not the root entity when you join on *ToMany associations.
      */
+    @Override
     public final long findRowCount() {
         if (orderAdded) {
             throw new IllegalStateException("Cannot count rows with order by!");
@@ -461,6 +499,7 @@ public class Query<T> implements Iterable<T> {
      *
      * @param field a field of the model
      */
+    @Override
     public final long findDistinctCount(String field) {
         if (orderAdded) {
             throw new IllegalStateException("Cannot count rows with order by!");
@@ -472,6 +511,7 @@ public class Query<T> implements Iterable<T> {
         return result.longValue();
     }
 
+    @Override
     public final <ID> List<ID> findIds() {
         beforeExecute();
         detachedCriteria.setProjection(Projections.id());
@@ -481,6 +521,7 @@ public class Query<T> implements Iterable<T> {
         return result;
     }
 
+    @Override
     public final PagedQueryIterator<T> findPagedIterator(int pageSize) {
         return new PagedQueryIterator<T>(this, pageSize);
     }
@@ -490,24 +531,25 @@ public class Query<T> implements Iterable<T> {
         return findPagedIterator(DEFAULT_ITERATOR_PAGE_SIZE);
     }
 
-    public final Query<T> orderByAsc(String field) {
+    @Override
+    public final LegacyQuery<T> orderByAsc(String field) {
         detachedCriteria.addOrder(Order.asc(field));
         this.orderAdded = true;
         return this;
     }
 
-    public final Query<T> orderByDesc(String field) {
+    public final LegacyQuery<T> orderByDesc(String field) {
         detachedCriteria.addOrder(Order.desc(field));
         this.orderAdded = true;
         return this;
     }
 
-    public final Query<T> setFirstResult(int firstResult) {
+    public final LegacyQuery<T> setFirstResult(int firstResult) {
         this.firstResult = firstResult;
         return this;
     }
 
-    public final Query<T> setMaxRows(int rows) {
+    public final LegacyQuery<T> setMaxRows(int rows) {
         this.maxResults = rows;
         return this;
     }

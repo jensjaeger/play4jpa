@@ -5,18 +5,18 @@ import java.util.List;
 import java.util.NoSuchElementException;
 
 /**
- * Iterator for a paged result set of an {@link Query}.
+ * Iterator for a paged result set of an {@link LegacyQuery}.
  *
  * @param <T> Entity type
  */
 public final class PagedQueryIterator<T> implements Iterator<T> {
-    private final Query<T> query;
+    private final LegacyQuery<T> query;
     private final int pageSize;
     private int pageNo;
     private List<T> pageResults;
     private Iterator<T> pageResultIterator;
 
-    public PagedQueryIterator(Query<T> query, int pageSize) {
+    public PagedQueryIterator(LegacyQuery<T> query, int pageSize) {
         if(query == null) {
             throw new NullPointerException("query can not be null!");
         }
