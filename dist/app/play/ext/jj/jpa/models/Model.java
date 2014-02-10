@@ -1,15 +1,16 @@
 package play.ext.jj.jpa.models;
 
+import org.hibernate.Criteria;
 import play.Logger;
 import play.ext.jj.jpa.db.Db;
-import play.ext.jj.jpa.query.LegacyQuery;
+import play.ext.jj.jpa.query.Query;
 import play.ext.jj.jpa.query.QueryProxy;
 
 import javax.persistence.MappedSuperclass;
 import java.io.Serializable;
 
 /**
- * Model base class similar to Play Ebean Model base class.
+ * Play Ebean like Model base class for Hibernate.
  *
  * @author Jens (mail@jensjaeger.com)
  * @author rosem
@@ -17,6 +18,9 @@ import java.io.Serializable;
 @MappedSuperclass
 public abstract class Model<T extends Model<T>> implements QueryProxy<T>, Serializable {
 
+    /**
+     * Logger instance
+     */
     private static final Logger.ALogger log = Logger.of(Model.class);
 
     /**
@@ -30,6 +34,7 @@ public abstract class Model<T extends Model<T>> implements QueryProxy<T>, Serial
         if (!play.db.jpa.JPA.em().contains(this)) {
             throw new IllegalStateException("Object not in persistence context! Call save for new objects");
         }
+
         log.trace("Running preUpdate() on: {}", this.toString());
         preUpdate();
         log.trace("preUpdate() finished");
@@ -48,6 +53,7 @@ public abstract class Model<T extends Model<T>> implements QueryProxy<T>, Serial
         if (play.db.jpa.JPA.em().contains(this)) {
             throw new IllegalStateException("Object already in persistence context! Call update for existing objects");
         }
+
         log.trace("Running preSave() on: {}", this.toString());
         preSave();
         log.trace("preSave() finished");
@@ -59,6 +65,10 @@ public abstract class Model<T extends Model<T>> implements QueryProxy<T>, Serial
      * Delete this Model.
      */
     public final void delete() {
+        log.trace("Running preDelete() on: {}", this.toString());
+        preDelete();
+        log.trace("preDelete() finished", this.toString());
+
         play.db.jpa.JPA.em().remove(this);
         Db.setCommitNeeded();
     }
@@ -70,18 +80,14 @@ public abstract class Model<T extends Model<T>> implements QueryProxy<T>, Serial
         Db.em().refresh(this);
     }
 
-    /**
-     * Reverts any modifications that were made to this managed entity.<br>
-     * Call this method if you want to prevent the auto commit at the end of a controller to persist modifications to
-     * this object.
-     */
-    public final void revert() {
-        Db.em().refresh(this);
+    @Override
+    public void prepareQuery(Query<T> query) {
+        // Override in subclass
     }
 
     @Override
-    public final void prepareQuery(LegacyQuery<T> query) {
-        addQueryRestrictions(query);
+    public void preExecute(Criteria executableCriteria) {
+        // Override in subclass
     }
 
     /**
@@ -101,12 +107,10 @@ public abstract class Model<T extends Model<T>> implements QueryProxy<T>, Serial
     }
 
     /**
-     * Adds security/visibility restrictions to the given query.
+     * Called before an existing model is deleted from the database.
      * <p/>
-     * Override this method in subclasses to implement model specific restrictions.
-     *
-     * @param query {@link play.ext.jj.jpa.query.LegacyQuery}
+     * Override this method in subclasses if needed.
      */
-    protected void addQueryRestrictions(LegacyQuery<T> query) {
+    protected void preDelete() {
     }
 }

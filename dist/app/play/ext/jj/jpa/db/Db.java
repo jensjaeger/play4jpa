@@ -4,12 +4,21 @@ import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
 
 /**
- * Custom JPA Helpers.
+ * Helper functions to facilitate working with database transactions for Hibernate.
+ *
+ * @author Jens (mail@jensjaeger.com)
+ * @author rosem
  */
 public class Db extends play.db.jpa.JPA {
 
+    /**
+     * Logger instance
+     */
     private static final play.Logger.ALogger log = play.Logger.of(Db.class);
 
+    /**
+     * Flag to indicate whether a commit operation is needed.
+     */
     private static final ThreadLocal<Boolean> needsCommit = new ThreadLocal<>();
 
     /**
@@ -17,36 +26,42 @@ public class Db extends play.db.jpa.JPA {
      *
      * @param block Block of code to execute.
      */
+    /**
+     * Run a block of code in a JPA transaction and return a value.
+     *
+     * @param block Block to execute
+     * @param <T>   Type of return value
+     * @return Return value of block
+     * @throws java.lang.Throwable by block.invoke()
+     */
     public static <T> T withTx(play.libs.F.Function0<T> block) throws Throwable {
         return withTx("default", false, block);
     }
 
     /**
-     * Run a block of code in a JPA transaction.
+     * Run a block of code in a JPA transaction without returning a value.
      *
-     * @param block Block of code to execute.
+     * @param block Block to execute
+     * @throws java.lang.Throwable by block.invoke()
      */
-    public static void withTx(final play.libs.F.Callback0 block) {
-        try {
-            withTx("default", false, new play.libs.F.Function0<Void>() {
-                @Override
-                public Void apply() throws Throwable {
-                    block.invoke();
-                    return null;
-                }
-            });
-        }
-        catch (Throwable t) {
-            throw new RuntimeException(t);
-        }
+    public static void withTx(final play.libs.F.Callback0 block) throws Throwable {
+        withTx("default", false, new play.libs.F.Function0<Void>() {
+            @Override
+            public Void apply() throws Throwable {
+                block.invoke();
+                return null;
+            }
+        });
     }
 
     /**
-     * Run a block of code in a JPA transaction.
+     * Run a block of code in a JPA transaction for a specific persistence unit and return a value.
      *
-     * @param name The persistence unit name
-     * @param readOnly Is the transaction read-only?
-     * @param block Block of code to execute.
+     * @param name     Persistence unit name
+     * @param readOnly If true, transaction is read-only
+     * @param block    Block to execute
+     * @return Return value of block
+     * @throws java.lang.Throwable by block.invoke()
      */
     public static <T> T withTx(String name, boolean readOnly, play.libs.F.Function0<T> block) throws Throwable {
         EntityManager em = null;
@@ -66,26 +81,22 @@ public class Db extends play.db.jpa.JPA {
             if (tx != null && tx.isActive()) {
                 if (needsCommit() && !tx.getRollbackOnly()) {
                     tx.commit();
-                }
-                else {
+                } else {
                     tx.rollback();
                 }
             }
             return result;
-        }
-        catch (Throwable t) {
+        } catch (Throwable t) {
             if (tx != null && tx.isActive()) {
                 try {
                     tx.rollback();
-                }
-                catch (Throwable e) {
+                } catch (Throwable e) {
                     // Ignore errors on rollback
                     log.error("Error on rollback!", e);
                 }
             }
             throw t;
-        }
-        finally {
+        } finally {
             bindNeedsCommitToThread();
             play.db.jpa.JPA.bindForCurrentThread(null);
             if (em != null) {
@@ -95,37 +106,41 @@ public class Db extends play.db.jpa.JPA {
     }
 
     /**
-     * Bind an EntityManager to the current thread.
+     * Set default value for {@link #needsCommit} for the current thread.
      */
     public static void bindNeedsCommitToThread() {
         needsCommit.set(Boolean.FALSE);
     }
 
     /**
-     * Manual commit
+     * Execute a manual commit.
      */
     public static void commit() {
         play.db.jpa.JPA.em().getTransaction().commit();
     }
 
     /**
-     * Manual rollback
+     * Execute a manual rollback
      */
     public static void rollback() {
         EntityTransaction tx = play.db.jpa.JPA.em().getTransaction();
-        if(tx.isActive()) {
+        if (tx.isActive()) {
             tx.rollback();
         }
     }
 
     /**
-     * If set commit needed is set. The transaction is commited
-     * after the block execution.
+     * If commit needed is set, the transaction is committed after the block execution.
      */
     public static void setCommitNeeded() {
         needsCommit.set(Boolean.TRUE);
     }
 
+    /**
+     * Get if a commit is needed.
+     *
+     * @return If a commit is needed
+     */
     private static boolean needsCommit() {
         final Boolean b = needsCommit.get();
         return (b != null && b.booleanValue());

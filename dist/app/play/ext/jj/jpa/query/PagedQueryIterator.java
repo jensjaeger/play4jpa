@@ -2,67 +2,109 @@ package play.ext.jj.jpa.query;
 
 import java.util.Iterator;
 import java.util.List;
-import java.util.NoSuchElementException;
 
 /**
- * Iterator for a paged result set of an {@link LegacyQuery}.
+ * Iterator for a paged result set of a {@link Query}.
  *
- * @param <T> Entity type
+ * This will load entities in batches of the given page size. <b>Be sure to always use {@link #hasNext()} to ensure
+ * that there are populated results available.</b>
+ *
+ * @param <T> Type of queried entity
+ * @author Jens (mail@jensjaeger.com)
+ * @author rosem
  */
 public final class PagedQueryIterator<T> implements Iterator<T> {
-    private final LegacyQuery<T> query;
-    private final int pageSize;
+
+    /**
+     * Underlying query
+     */
+    private final Query<T> query;
+
+    /**
+     * Number of rows per page
+     */
+    private final int rowsPerPage;
+
+    /**
+     * Number of current page
+     */
     private int pageNo;
+
+    /**
+     * Results for current page
+     */
     private List<T> pageResults;
-    private Iterator<T> pageResultIterator;
 
-    public PagedQueryIterator(LegacyQuery<T> query, int pageSize) {
-        if(query == null) {
-            throw new NullPointerException("query can not be null!");
+    /**
+     * Iterator for page results
+     */
+    private Iterator<T> pageResultsIterator;
+
+    /**
+     * Create a new paged iterator for wrapping the given query and using the given page size.
+     *
+     * @param query       Query to page results for
+     * @param rowsPerPage Number of results per page
+     */
+    public PagedQueryIterator(Query<T> query, int rowsPerPage) {
+        if (query == null) {
+            throw new IllegalArgumentException("query must not be null");
         }
-        if(pageSize < 1) {
-            throw new IllegalArgumentException("pageSize < 1 is invalid!");
+        if (rowsPerPage < 1) {
+            throw new IllegalArgumentException("rowsPerPage must be >= 1");
         }
+
         this.query = query;
-        this.pageSize = pageSize;
-        this.pageNo = 0;
+        this.rowsPerPage = rowsPerPage;
+        this.pageNo = 1;
     }
 
-    public int getPageSize() {
-        return pageSize;
+    /**
+     * Get current number of rows per page.
+     *
+     * @return Number of rows per page
+     */
+    public int getRowsPerPage() {
+        return rowsPerPage;
     }
 
-    public void setPageNo(int pageNo) {
-        this.pageNo = pageNo;
-        pageResults = null;
-    }
-
+    /**
+     * Get current page number.
+     *
+     * @return Number of current page
+     */
     public int getPageNo() {
         return pageNo;
     }
 
-    private void loadPageResults() {
-        final int firstResult = pageNo * pageSize;
-        query.setFirstResult(firstResult).setMaxRows(pageSize);
-        pageResults = query.findList();
-        pageResultIterator = pageResults.iterator();
+    /**
+     * Set page number to retrieve.
+     * <p/>
+     * This will reset the current data and fetch the new page once you call {@link #hasNext()}.
+     *
+     * @param pageNo Requested page number
+     */
+    public void setPageNo(int pageNo) {
+        this.pageNo = pageNo;
+        pageResults = null;
+        pageResultsIterator = null;
     }
 
     @Override
     public boolean hasNext() {
-        if (pageResultIterator == null) {
+        if (pageResults == null || pageResultsIterator == null) {
             loadPageResults();
         }
 
-        if (pageResultIterator.hasNext()) {
+        if (pageResultsIterator.hasNext()) {
             return true;
         }
 
-        // Load next page
-        if (pageResults.size() == pageSize) {
+        // Check if we had a full page last time
+        if (pageResults.size() == rowsPerPage) {
             this.pageNo++;
             loadPageResults();
-            return pageResultIterator.hasNext();
+            return pageResultsIterator.hasNext();
         }
 
         // No more results
@@ -71,16 +113,23 @@ public final class PagedQueryIterator<T> implements Iterator<T> {
 
     @Override
     public T next() {
-        if (!hasNext()) {
-            throw new NoSuchElementException();
+        if (pageResults == null || pageResultsIterator == null) {
+            throw new IllegalStateException("It seems results were cleared during an iteration - do not change pages while iterating");
         }
-
-        return pageResultIterator.next();
+        return pageResultsIterator.next();
     }
 
     @Override
     public void remove() {
         throw new UnsupportedOperationException();
+    }
+
+    /**
+     * Load results for the current page.
+     */
+    private void loadPageResults() {
+        pageResults = query.findPage(pageNo, rowsPerPage);
+        pageResultsIterator = pageResults.iterator();
     }
 
 }

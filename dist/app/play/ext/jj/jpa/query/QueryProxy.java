@@ -1,15 +1,24 @@
 package play.ext.jj.jpa.query;
 
+import org.hibernate.Criteria;
+
 /**
- * Interface for a proxy that gets called every time when a new {@link LegacyQuery} is created. The proxy class can prepare
+ * Interface for a proxy that gets called every time when a new {@link play.ext.jj.jpa.query.Query} is created. The proxy class can prepare
  * the query and add some security restrictions.
  */
 public interface QueryProxy<T> {
 
     /**
-     * Prepares a new {@link LegacyQuery}.
+     * Prepares a new {@link play.ext.jj.jpa.query.Query}.
      *
-     * @param query New {@link LegacyQuery} object.
+     * @param query New {@link play.ext.jj.jpa.query.Query} object.
      */
-    public void prepareQuery(LegacyQuery<T> query);
+    public void prepareQuery(Query<T> query);
+
+    /**
+     * Last callback before the criteria query is finally executed.
+     *
+     * @param executableCriteria Executable criteria
+     */
+    void preExecute(Criteria executableCriteria);
 }

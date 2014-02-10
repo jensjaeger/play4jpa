@@ -5,7 +5,7 @@ import play.mvc.*;
 import play.mvc.Http.*;
 
 /**
- * Wraps an action in a JPA no commit transaction.
+ * Wraps an action in a JPA transaction.
  *
  * @author Jens (mail@jensjaeger.com)
  */

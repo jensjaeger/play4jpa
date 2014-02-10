@@ -1,121 +1,80 @@
 package play.ext.jj.jpa.models;
 
-import play.ext.jj.jpa.query.LegacyQuery;
-import play.ext.jj.jpa.query.QueryProxy;
+import play.ext.jj.jpa.query.Query;
 
 import java.util.List;
 
 /**
- * Finder implementation for hibernate (similar to ebean Finder).
+ * Play Ebean like implementation of Finder for Hibernate.
+ * <p/>
+ * To execute complex queries, get an empty query by calling {@link #query()} and adding restrictions.
+ * See {@link play.ext.jj.jpa.query.Query} for details.
  *
- * @param <I> Type of the identifier/primary key field
- * @param <T> Entity type
- *
+ * @param <I> Type of entity ID
+ * @param <T> Type of queried entity
  * @author Jens (mail@jensjaeger.com)
+ * @author rosem
  */
-public final class Finder<I, T> implements Query<T> {
+public final class Finder<I, T extends Model<T>> {
 
     /**
-     * Entity type.
+     * {@link java.lang.Class} of queried entity.
      */
-    private final Class<T> type;
+    private final Class<T> entityClass;
 
     /**
-     * Optional proxy for new query objects
+     * Create a new finder for the given ID and entity class.
+     *
+     * @param idClass     Class of entity ID
+     * @param entityClass Class of queried entity
      */
-    private final QueryProxy<T> queryProxy;
-
-    /**
-     * Counter for unique alias names.
-     */
-    private static int aliasCounter = 1;
-
-    public Finder(Class<T> type, QueryProxy<T> queryProxy) {
-        this.type = type;
-        this.queryProxy = queryProxy;
+    public Finder(Class<I> idClass, Class<T> entityClass) {
+        this.entityClass = entityClass;
     }
 
+    /**
+     * Get all entities.
+     *
+     * @return List with all entities
+     */
     public List<T> all() {
         return query().findList();
     }
 
+    /**
+     * Get first entity.
+     *
+     * @return First entity
+     */
     public T first() {
         return query().setMaxRows(1).findUnique();
     }
 
+    /**
+     * Get the current number of entities.
+     *
+     * @return Number of entities
+     */
     public long count() {
         return query().findRowCount();
     }
 
-    public LegacyQuery<T> where() {
-        return query();
-    }
-
+    /**
+     * Get an entity by its ID.
+     *
+     * @param id ID of entity to get
+     * @return Entity for ID
+     */
     public T byId(I id) {
         return query().byId(id);
     }
 
-    public LegacyQuery<T> query() {
-        final String alias = generateAlias(this.type);
-        return query(alias);
-    }
-
-    public LegacyQuery<T> query(String alias) {
-        LegacyQuery<T> query = new LegacyQuery<>(this.type, alias);
-        if (queryProxy != null) {
-            queryProxy.prepareQuery(query);
-        }
-        return query;
-    }
-
     /**
-     * Generates a unique alias name for the given entity type.
+     * Get a new query to add more complex restrictions.
      *
-     * @param type Entity type
-     * @return The generated alias name
+     * @return New query
      */
-    private static String generateAlias(Class<?> type) {
-        final int counter;
-        synchronized (Finder.class) {
-            counter = aliasCounter++;
-            if (aliasCounter > 1000000) {
-                aliasCounter = 1;
-            }
-        }
-
-        StringBuilder sb = new StringBuilder();
-        sb.append(type.getSimpleName());
-        sb.append("_");
-        sb.append(counter);
-        return sb.toString();
+    public Query<T> query() {
+        return new DefaultQuery<>(entityClass);
     }
-
-
-
-    /**
-     * Returns a {@link Finder} instance for the given entity class and uses the entity as {@link QueryProxy}.
-     *
-     * @param type Entity Type
-     * @param idType Primary Key (@Id) Type
-     * @return {@link Finder} instance
-     */
-    /*public static <T extends QueryProxy<T>, ID> Finder<T, ID> get(Class<T> type, Class<ID> idType) {
-        try {
-            QueryProxy<T> queryProxy = type.newInstance();
-            return new Finder<>(type, queryProxy);
-        } catch (Exception e) {
-            throw new IllegalArgumentException("Could not instantiate QueryProxy from class: " + type.getName());
-        }
-    }*/
-
-    /**
-     * Create a {@link Finder} instance for the given entity class without employing a proxy.
-     *
-     * @param type Entity Type
-     * @param idType Primary Key (@Id) Type
-     * @return {@link Finder} instance
-     */
-    /*public static <T, ID> Finder<T, ID> getUnproxied(Class<T> type, Class<ID> idType) {
-        return new Finder<T, ID>(type, null);
-    }*/
 }
