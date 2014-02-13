@@ -8,6 +8,12 @@ import java.util.List;
 
 import static org.junit.Assert.*;
 
+/**
+ * Test cases for the {@link play.ext.custom.jpa.test.models.Task} test model demonstrating and utilizing
+ * various {@link play.ext.jj.jpa.models.Finder} / {@link play.ext.jj.jpa.query.Query} methods.
+ *
+ * @author rosem
+ */
 public class TaskTest extends TestBase {
 
     private static final List<String> fixtures = Lists.newArrayList("tasks");

@@ -6,10 +6,13 @@ import play.ext.custom.jpa.test.models.Task;
 
 import java.util.List;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
+/**
+ * Test cases for {@link play.ext.jj.jpa.models.Finder}
+ *
+ * @author rosem
+ */
 public class FinderTest extends TestBase {
 
     private static final List<String> fixtures = Lists.newArrayList("tasks");
@@ -60,4 +63,24 @@ public class FinderTest extends TestBase {
         assertTrue(task4Found);
     }
 
+    @Test
+    public void firstTest() {
+        Task t = Task.find.first();
+        assertNotNull(t);
+    }
+
+    @Test
+    public void countTest() {
+        assertEquals(4, Task.find.count());
+    }
+
+    @Test
+    public void byId() {
+        Task t = Task.find.first();
+        Long id = t.id;
+
+        t = Task.find.byId(id);
+        assertNotNull(t);
+        assertEquals(id, t.id);
+    }
 }
