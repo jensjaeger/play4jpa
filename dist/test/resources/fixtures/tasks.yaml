@@ -1,4 +1,4 @@
-- !package models
+- !package play.ext.custom.jpa.test.models
 
 - !import fixtures/users.yaml
 

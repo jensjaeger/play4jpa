@@ -15,6 +15,8 @@ public class Task extends Model<Task> {
     @Id
     public Long id;
 
+    public String name;
+
     public Boolean done;
 
     @ManyToOne
