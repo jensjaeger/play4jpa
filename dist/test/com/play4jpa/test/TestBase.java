@@ -1,9 +1,9 @@
-package play.ext.custom.jpa.test;
+package com.play4jpa.test;
 
 import com.google.common.collect.Lists;
+import com.play4jpa.jpa.models.ModelTest;
 import org.junit.After;
 import org.junit.Before;
-import play.ext.jj.jpa.models.ModelTest;
 import play.test.FakeApplication;
 import play.test.Helpers;
 

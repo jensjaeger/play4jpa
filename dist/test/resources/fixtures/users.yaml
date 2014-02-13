@@ -1,4 +1,4 @@
-- !package play.ext.custom.jpa.test.models
+- !package com.play4jpa.test.models
 
 - User(jens):
     name: jens

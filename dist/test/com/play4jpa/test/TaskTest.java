@@ -1,13 +1,13 @@
-package play.ext.custom.jpa.test;
+package com.play4jpa.test;
 
+import com.play4jpa.test.models.Task;
 import org.junit.Test;
-import play.ext.custom.jpa.test.models.Task;
 
 import static org.junit.Assert.*;
 
 /**
- * Test cases for the {@link play.ext.custom.jpa.test.models.Task} test model demonstrating and utilizing
- * various {@link play.ext.jj.jpa.models.Finder} / {@link play.ext.jj.jpa.query.Query} methods.
+ * Test cases for the {@link com.play4jpa.test.models.Task} test model demonstrating and utilizing
+ * various {@link com.play4jpa.jpa.models.Finder} / {@link com.play4jpa.jpa.query.Query} methods.
  *
  * @author rosem
  */

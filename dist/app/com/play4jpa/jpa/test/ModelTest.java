@@ -1,4 +1,4 @@
-package play.ext.jj.jpa.test;
+package com.play4jpa.jpa.test;
 
 import play.Logger;
 import play.db.jpa.JPA;
@@ -65,11 +65,12 @@ public abstract class ModelTest {
      * @return Fixtures to load
      */
     public List<String> fixturesToLoad() {
-        return new ArrayList<String>();
+        return new ArrayList<>();
     }
 
     /**
      * Get the default path to where your fixtures are located.
+     *
      * @return Path to fixtures' folder
      */
     public static String getDefaultFixturePath() {
@@ -79,6 +80,7 @@ public abstract class ModelTest {
     /**
      * Map the given fixture names to full paths using the pattern fixturePath/name.yaml where fixturePath
      * is determined by {@link #getDefaultFixturePath()}.
+     *
      * @param names Fixture names
      * @return Paths to fixtures
      */

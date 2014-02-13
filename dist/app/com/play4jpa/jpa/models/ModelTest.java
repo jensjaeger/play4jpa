@@ -1,4 +1,4 @@
-package play.ext.jj.jpa.models;
+package com.play4jpa.jpa.models;
 
 import play.Logger;
 import play.db.jpa.JPA;
@@ -70,6 +70,7 @@ public abstract class ModelTest {
 
     /**
      * Get the default path to where your fixtures are located.
+     *
      * @return Path to fixtures' folder
      */
     public static String getDefaultFixturePath() {
@@ -79,6 +80,7 @@ public abstract class ModelTest {
     /**
      * Map the given fixture names to full paths using the pattern fixturePath/name.yaml where fixturePath
      * is determined by {@link #getDefaultFixturePath()}.
+     *
      * @param names Fixture names
      * @return Paths to fixtures
      */

@@ -1,4 +1,4 @@
-package play.ext.jj.jpa.db;
+package com.play4jpa.jpa.db;
 
 import play.mvc.With;
 
@@ -17,5 +17,6 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 public @interface Tx {
     String value() default "default";
+
     boolean readOnly() default false;
 }

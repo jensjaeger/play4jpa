@@ -1,13 +1,13 @@
-package play.ext.jj.jpa.models;
+package com.play4jpa.jpa.models;
 
+import com.play4jpa.jpa.query.PagedQueryIterator;
+import com.play4jpa.jpa.query.Query;
+import com.play4jpa.jpa.query.QueryProxy;
 import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.criterion.*;
 import org.hibernate.ejb.HibernateEntityManager;
 import play.db.jpa.JPA;
-import play.ext.jj.jpa.query.PagedQueryIterator;
-import play.ext.jj.jpa.query.Query;
-import play.ext.jj.jpa.query.QueryProxy;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -15,7 +15,7 @@ import java.util.Iterator;
 import java.util.List;
 
 /**
- * Default Implementation of the {@link play.ext.jj.jpa.query.Query} interface.
+ * Default Implementation of the {@link com.play4jpa.jpa.query.Query} interface.
  *
  * @param <T> Type of queried entity
  * @author Jens (mail@jensjaeger.com)
@@ -36,7 +36,7 @@ public class DefaultQuery<T> implements Query<T> {
     private final Class<T> entityClass;
 
     /**
-     * Optional {@link play.ext.jj.jpa.query.QueryProxy}.
+     * Optional {@link com.play4jpa.jpa.query.QueryProxy}.
      */
     private final QueryProxy<T> proxy;
 
@@ -248,7 +248,7 @@ public class DefaultQuery<T> implements Query<T> {
         criteria.setProjection(Projections.rowCount());
         Long count = (Long) executablePlainCriteria().uniqueResult();
         criteria.setProjection(null);
-        return count.longValue();
+        return count;
     }
 
     @Override
@@ -256,7 +256,7 @@ public class DefaultQuery<T> implements Query<T> {
         criteria.setProjection(Projections.countDistinct(field));
         Long count = (Long) executablePlainCriteria().uniqueResult();
         criteria.setProjection(null);
-        return count.longValue();
+        return count;
     }
 
     @Override

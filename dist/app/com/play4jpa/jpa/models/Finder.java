@@ -1,6 +1,6 @@
-package play.ext.jj.jpa.models;
+package com.play4jpa.jpa.models;
 
-import play.ext.jj.jpa.query.Query;
+import com.play4jpa.jpa.query.Query;
 
 import java.util.List;
 
@@ -8,7 +8,7 @@ import java.util.List;
  * Play Ebean like implementation of Finder for Hibernate.
  * <p/>
  * To execute complex queries, get an empty query by calling {@link #query()} and adding restrictions.
- * See {@link play.ext.jj.jpa.query.Query} for details.
+ * See {@link com.play4jpa.jpa.query.Query} for details.
  *
  * @param <I> Type of entity ID
  * @param <T> Type of queried entity

@@ -1,4 +1,4 @@
-package play.ext.jj.jpa.db;
+package com.play4jpa.jpa.db;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
@@ -143,6 +143,6 @@ public class Db extends play.db.jpa.JPA {
      */
     private static boolean needsCommit() {
         final Boolean b = needsCommit.get();
-        return (b != null && b.booleanValue());
+        return (b != null && b);
     }
 }

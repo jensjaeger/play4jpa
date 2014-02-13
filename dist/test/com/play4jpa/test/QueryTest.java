@@ -1,15 +1,15 @@
-package play.ext.custom.jpa.test;
+package com.play4jpa.test;
 
+import com.play4jpa.test.models.Task;
+import com.play4jpa.test.models.User;
 import org.hibernate.NonUniqueResultException;
 import org.junit.Test;
-import play.ext.custom.jpa.test.models.Task;
-import play.ext.custom.jpa.test.models.User;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
 /**
- * Test cases for {@link play.ext.jj.jpa.query.Query}
+ * Test cases for {@link com.play4jpa.jpa.query.Query}
  *
  * @author rosem
  */

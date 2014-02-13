@@ -1,4 +1,4 @@
-package play.ext.jj.jpa.query;
+package com.play4jpa.jpa.query;
 
 import org.hibernate.criterion.Criterion;
 import org.hibernate.criterion.DetachedCriteria;
@@ -313,7 +313,7 @@ public interface Query<T> {
 
     /**
      * Find all entities matching the current query and return them in a paged fashion.
-     * See {@link play.ext.jj.jpa.query.PagedQueryIterator} for details.
+     * See {@link com.play4jpa.jpa.query.PagedQueryIterator} for details.
      * <p/>
      * This is the same as using {@link #findPagedIterator(int, int)} with <b>startPage</b>=1 and <b>pageSize</b>.
      * <p/>
@@ -326,7 +326,7 @@ public interface Query<T> {
 
     /**
      * Find all entities matching the current query and return them in a paged fashion starting with startPage.
-     * See {@link play.ext.jj.jpa.query.PagedQueryIterator} for details.
+     * See {@link com.play4jpa.jpa.query.PagedQueryIterator} for details.
      * <p/>
      * <b>Will override any values set by {@link #setFirstResult(int)} and {@link #setMaxRows(int)}!</b>
      *

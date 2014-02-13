@@ -1,11 +1,11 @@
-package play.ext.jj.jpa.query;
+package com.play4jpa.jpa.query;
 
 import java.util.Iterator;
 import java.util.List;
 
 /**
  * Iterator for a paged result set of a {@link Query}.
- *
+ * <p/>
  * This will load entities in batches of the given page size. <b>Be sure to always use {@link #hasNext()} to ensure
  * that there are populated results available.</b>
  *

@@ -1,10 +1,10 @@
-package play.ext.jj.jpa.models;
+package com.play4jpa.jpa.models;
 
+import com.play4jpa.jpa.db.Db;
+import com.play4jpa.jpa.query.Query;
+import com.play4jpa.jpa.query.QueryProxy;
 import org.hibernate.Criteria;
 import play.Logger;
-import play.ext.jj.jpa.db.Db;
-import play.ext.jj.jpa.query.Query;
-import play.ext.jj.jpa.query.QueryProxy;
 
 import javax.persistence.MappedSuperclass;
 import java.io.Serializable;

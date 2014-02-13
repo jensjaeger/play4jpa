@@ -1,7 +1,7 @@
-package play.ext.custom.jpa.test.models;
+package com.play4jpa.test.models;
 
-import play.ext.jj.jpa.models.Finder;
-import play.ext.jj.jpa.models.Model;
+import com.play4jpa.jpa.models.Finder;
+import com.play4jpa.jpa.models.Model;
 
 import javax.persistence.Entity;
 import javax.persistence.Id;
