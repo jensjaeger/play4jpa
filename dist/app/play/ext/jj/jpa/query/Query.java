@@ -273,7 +273,7 @@ public interface Query<T> {
      * Get entity for given ID.
      *
      * @param id ID of entity to get
-     * @return Entity for ID
+     * @return Entity for ID or null
      */
     T byId(Object id);
 

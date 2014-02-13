@@ -13,6 +13,7 @@ import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static play.test.Helpers.fakeApplication;
 import static play.test.Helpers.inMemoryDatabase;
 
@@ -82,5 +83,9 @@ public class TaskTest extends ModelTest {
         assertNotNull(newTask);
         assertEquals(id, newTask.id);
         assertEquals(t, newTask);
+
+        t.delete();
+        newTask = Task.find.byId(id);
+        assertNull(newTask);
     }
 }

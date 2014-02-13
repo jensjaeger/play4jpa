@@ -28,6 +28,7 @@ public final class Finder<I, T extends Model<T>> {
      * @param idClass     Class of entity ID
      * @param entityClass Class of queried entity
      */
+    @SuppressWarnings("unused")
     public Finder(Class<I> idClass, Class<T> entityClass) {
         this.entityClass = entityClass;
     }
@@ -63,7 +64,7 @@ public final class Finder<I, T extends Model<T>> {
      * Get an entity by its ID.
      *
      * @param id ID of entity to get
-     * @return Entity for ID
+     * @return Entity for ID or null
      */
     public T byId(I id) {
         return query().byId(id);
