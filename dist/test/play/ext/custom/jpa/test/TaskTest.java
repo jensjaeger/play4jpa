@@ -11,9 +11,7 @@ import play.test.Helpers;
 
 import java.util.List;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
+import static org.junit.Assert.*;
 import static play.test.Helpers.fakeApplication;
 import static play.test.Helpers.inMemoryDatabase;
 
@@ -44,7 +42,7 @@ public class TaskTest extends ModelTest {
     }
 
     @Test
-    public void defaultTasks() {
+    public void defaultTasksTest() {
         assertEquals(4, Task.find.count());
 
         Task t = Task.find.query().eq("name", "Task 1").findUnique();
@@ -62,10 +60,14 @@ public class TaskTest extends ModelTest {
         assertEquals(4, length);
 
         Task t = new Task();
+        t.name = "New Task";
         t.done = false;
         t.save();
 
         assertNotNull(t.id);
+        assertEquals("New Task", t.name);
+        assertFalse(t.done);
+        assertNull(t.creator);
         length = Task.find.count();
         assertEquals(5, length);
     }
@@ -87,5 +89,28 @@ public class TaskTest extends ModelTest {
         t.delete();
         newTask = Task.find.byId(id);
         assertNull(newTask);
+    }
+
+    @Test
+    public void updateTaskTest() {
+        Task t = new Task();
+        t.name = "New Task";
+        t.done = false;
+        t.save();
+
+        Long id = t.id;
+        assertNotNull(id);
+        assertFalse(t.done);
+
+        t = Task.find.byId(id);
+        assertNotNull(t);
+        assertFalse(t.done);
+        t.done = true;
+        t.update();
+
+        t = Task.find.byId(id);
+        assertNotNull(t);
+        assertEquals("New Task", t.name);
+        assertTrue(t.done);
     }
 }
