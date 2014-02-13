@@ -19,5 +19,5 @@
 
 - Task(task4):
     name: Task 4
-    done: false
+    done: true
     creator: User(jens)
