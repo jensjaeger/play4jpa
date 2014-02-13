@@ -1,6 +1,5 @@
 package play.ext.custom.jpa.test;
 
-import com.google.common.collect.Lists;
 import org.junit.Test;
 import play.ext.custom.jpa.test.models.Task;
 
@@ -14,13 +13,6 @@ import static org.junit.Assert.*;
  * @author rosem
  */
 public class FinderTest extends TestBase {
-
-    private static final List<String> fixtures = Lists.newArrayList("tasks");
-
-    @Override
-    public List<String> fixturesToLoad() {
-        return fixtures;
-    }
 
     @Test
     public void allTest() {
