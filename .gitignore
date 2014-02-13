@@ -11,3 +11,4 @@ samples/.idea_modules
 samples/project/project
 samples/target
 samples/data
+dist/logs
