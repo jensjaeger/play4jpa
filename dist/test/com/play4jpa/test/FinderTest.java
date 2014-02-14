@@ -17,12 +17,13 @@ public class FinderTest extends TestBase {
     @Test
     public void allTest() {
         List<Task> tasks = Task.find.all();
-        assertEquals(4, tasks.size());
+        assertEquals(NUM_DEFAULT_TASKS, tasks.size());
 
         boolean task1Found = false;
         boolean task2Found = false;
         boolean task3Found = false;
         boolean task4Found = false;
+        boolean task5Found = false;
 
         for (Task t : tasks) {
             switch (t.name) {
@@ -46,6 +47,13 @@ public class FinderTest extends TestBase {
                     assertEquals("jens", t.creator.name);
                     task4Found = true;
                     break;
+                case "jens":
+                    assertFalse(t.done);
+                    assertEquals("jens", t.creator.name);
+                    task5Found = true;
+                    break;
+                default:
+                    fail();
             }
         }
 
@@ -53,6 +61,7 @@ public class FinderTest extends TestBase {
         assertTrue(task2Found);
         assertTrue(task3Found);
         assertTrue(task4Found);
+        assertTrue(task5Found);
     }
 
     @Test
@@ -63,7 +72,7 @@ public class FinderTest extends TestBase {
 
     @Test
     public void countTest() {
-        assertEquals(4, Task.find.count());
+        assertEquals(NUM_DEFAULT_TASKS, Task.find.count());
     }
 
     @Test

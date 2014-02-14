@@ -15,7 +15,7 @@ public class TaskTest extends TestBase {
 
     @Test
     public void defaultTasksTest() {
-        assertEquals(4, Task.find.count());
+        assertEquals(NUM_DEFAULT_TASKS, Task.find.count());
 
         Task t = Task.find.query().eq("name", "Task 1").findUnique();
         assertNotNull(t);
@@ -29,7 +29,7 @@ public class TaskTest extends TestBase {
     @Test
     public void createTaskTest() {
         long length = Task.find.count();
-        assertEquals(4, length);
+        assertEquals(NUM_DEFAULT_TASKS, length);
 
         Task t = new Task();
         t.name = "New Task";
@@ -41,7 +41,7 @@ public class TaskTest extends TestBase {
         assertFalse(t.done);
         assertNull(t.creator);
         length = Task.find.count();
-        assertEquals(5, length);
+        assertEquals(NUM_DEFAULT_TASKS + 1, length);
     }
 
     @Test

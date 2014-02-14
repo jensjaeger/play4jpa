@@ -14,6 +14,8 @@ import static play.test.Helpers.inMemoryDatabase;
 
 public abstract class TestBase extends ModelTest {
 
+    public static final int NUM_DEFAULT_TASKS = 5;
+
     private static final List<String> fixtures = Lists.newArrayList("tasks");
 
     private FakeApplication app;

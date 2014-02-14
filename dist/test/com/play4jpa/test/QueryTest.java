@@ -40,4 +40,9 @@ public class QueryTest extends TestBase {
         assertEquals(tom, t.creator);
     }
 
+    @Test
+    public void eqPropertyTest() {
+
+    }
+
 }
