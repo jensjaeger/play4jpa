@@ -5,8 +5,7 @@ import com.play4jpa.test.models.User;
 import org.hibernate.NonUniqueResultException;
 import org.junit.Test;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.*;
 
 /**
  * Test cases for {@link com.play4jpa.jpa.query.Query}
@@ -40,9 +39,13 @@ public class QueryTest extends TestBase {
         assertEquals(tom, t.creator);
     }
 
-    @Test
+    //@Test
     public void eqPropertyTest() {
-
+        Task t = Task.find.query().eqProperty("name", "creator.name").findUnique();
+        assertNotNull(t);
+        assertFalse(t.done);
+        assertEquals("jens", t.name);
+        assertEquals("jens", t.creator.name);
     }
 
 }

@@ -1,5 +1,7 @@
 package com.play4jpa.jpa.models;
 
+import com.google.common.base.Strings;
+import com.google.common.collect.Maps;
 import com.play4jpa.jpa.query.PagedQueryIterator;
 import com.play4jpa.jpa.query.Query;
 import com.play4jpa.jpa.query.QueryProxy;
@@ -9,10 +11,7 @@ import org.hibernate.criterion.*;
 import org.hibernate.ejb.HibernateEntityManager;
 import play.db.jpa.JPA;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 
 /**
  * Default Implementation of the {@link com.play4jpa.jpa.query.Query} interface.
@@ -31,6 +30,16 @@ public class DefaultQuery<T> implements Query<T> {
     public static final int MAX_IN_SIZE = 500;
 
     /**
+     * Maximum alias index before reset to 1
+     */
+    private static final int MAX_ALIAS_INDEX = 9999;
+
+    /**
+     * Currently used maximum alias index
+     */
+    private static int globalAliasIndex = 0;
+
+    /**
      * {@link java.lang.Class} of queried entity.
      */
     private final Class<T> entityClass;
@@ -39,12 +48,22 @@ public class DefaultQuery<T> implements Query<T> {
      * Optional {@link com.play4jpa.jpa.query.QueryProxy}.
      */
     private final QueryProxy<T> proxy;
-
+    /**
+     * Alias index for this query
+     */
+    private final int aliasIndex;
+    /**
+     * Currently active alias
+     */
+    //private final String activeAlias;
+    /**
+     * Map of entity class to used alias
+     */
+    private final LinkedHashMap<String, String> aliases = Maps.newLinkedHashMap();
     /**
      * Accumulated criteria for query.
      */
     private DetachedCriteria criteria;
-
     /**
      * Offset of first result row.
      */
@@ -74,107 +93,121 @@ public class DefaultQuery<T> implements Query<T> {
         this.entityClass = entityClass;
         this.proxy = proxy;
         this.criteria = DetachedCriteria.forClass(this.entityClass);
+        this.aliasIndex = getNewAliasIndex();
+    }
+
+    /**
+     * Get a new alias index for use in a new query.
+     *
+     * @return Alias index for query
+     */
+    private static synchronized final int getNewAliasIndex() {
+        if (globalAliasIndex == MAX_ALIAS_INDEX) {
+            globalAliasIndex = 1;
+        } else {
+            globalAliasIndex++;
+        }
+        return globalAliasIndex;
+    }
+
+    public final int getAliasIndex() {
+        return aliasIndex;
     }
 
     @Override
     public Query<T> eq(String field, Object value) {
-        criteria.add(Restrictions.eq(field, value));
+        criteria.add(Restrictions.eq(alialize(field), value));
         return this;
     }
 
     @Override
     public Query<T> eqProperty(String field1, String field2) {
-        criteria.add(Restrictions.eqProperty(field1, field2));
+        criteria.add(Restrictions.eqProperty(alialize(field1), alialize(field2)));
         return this;
     }
 
     @Override
     public Query<T> ieq(String field, String value) {
-        criteria.add(Restrictions.eq(field, value).ignoreCase());
+        criteria.add(Restrictions.eq(alialize(field), value).ignoreCase());
         return this;
     }
 
     @Override
     public Query<T> ne(String field, Object value) {
-        criteria.add(Restrictions.ne(field, value));
+        criteria.add(Restrictions.ne(alialize(field), value));
         return this;
     }
 
     @Override
     public Query<T> neProperty(String field1, String field2) {
-        criteria.add(Restrictions.neProperty(field1, field2));
-        return this;
+        throw new UnsupportedOperationException();
     }
 
     @Override
     public Query<T> ilike(String field, String value) {
-        criteria.add(Restrictions.ilike(field, value));
+        criteria.add(Restrictions.ilike(alialize(field), value));
         return this;
     }
 
     @Override
     public Query<T> ge(String field, Object value) {
-        criteria.add(Restrictions.ge(field, value));
+        criteria.add(Restrictions.ge(alialize(field), value));
         return this;
     }
 
     @Override
     public Query<T> geProperty(String field1, String field2) {
-        criteria.add(Restrictions.geProperty(field1, field2));
-        return this;
+        throw new UnsupportedOperationException();
     }
 
     @Override
     public Query<T> gt(String field, Object value) {
-        criteria.add(Restrictions.gt(field, value));
+        criteria.add(Restrictions.gt(alialize(field), value));
         return this;
     }
 
     @Override
     public Query<T> gtProperty(String field1, String field2) {
-        criteria.add(Restrictions.gtProperty(field1, field2));
-        return this;
+        throw new UnsupportedOperationException();
     }
 
     @Override
     public Query<T> le(String field, Object value) {
-        criteria.add(Restrictions.le(field, value));
+        criteria.add(Restrictions.le(alialize(field), value));
         return this;
     }
 
     @Override
     public Query<T> leProperty(String field1, String field2) {
-        criteria.add(Restrictions.leProperty(field1, field2));
-        return this;
+        throw new UnsupportedOperationException();
     }
 
     @Override
     public Query<T> lt(String field, Object value) {
-        criteria.add(Restrictions.lt(field, value));
+        criteria.add(Restrictions.lt(alialize(field), value));
         return this;
     }
 
     @Override
     public Query<T> ltProperty(String field1, String field2) {
-        criteria.add(Restrictions.ltProperty(field1, field2));
-        return this;
+        throw new UnsupportedOperationException();
     }
 
     @Override
     public Query<T> between(String field, Object lo, Object hi) {
-        criteria.add(Restrictions.between(field, lo, hi));
+        criteria.add(Restrictions.between(alialize(field), lo, hi));
         return this;
     }
 
     @Override
     public Query<T> isNull(String field) {
-        criteria.add(Restrictions.isNull(field));
+        criteria.add(Restrictions.isNull(alialize(field)));
         return this;
     }
 
     @Override
     public Query<T> isNotNull(String field) {
-        criteria.add(Restrictions.isNotNull(field));
+        criteria.add(Restrictions.isNotNull(alialize(field)));
         return this;
     }
 
@@ -198,7 +231,7 @@ public class DefaultQuery<T> implements Query<T> {
 
         SplitCollectionIterator<?> splitIterator = new SplitCollectionIterator<>(MAX_IN_SIZE, values);
         while (splitIterator.hasNext()) {
-            criteria.add(Restrictions.in(field, splitIterator.next()));
+            criteria.add(Restrictions.in(alialize(field), splitIterator.next()));
         }
 
         return this;
@@ -207,7 +240,7 @@ public class DefaultQuery<T> implements Query<T> {
     @Override
     public Query<T> in(String field, Query<?> subQuery, String subField) {
         DetachedCriteria subQueryCriteria = criteriaForSubQuery(subQuery, Projections.property(subField));
-        criteria.add(Subqueries.propertyIn(field, subQueryCriteria));
+        criteria.add(Subqueries.propertyIn(alialize(field), subQueryCriteria));
         return this;
     }
 
@@ -219,7 +252,7 @@ public class DefaultQuery<T> implements Query<T> {
 
         SplitCollectionIterator<?> splitIterator = new SplitCollectionIterator<>(MAX_IN_SIZE, values);
         while (splitIterator.hasNext()) {
-            criteria.add(Restrictions.not(Restrictions.in(field, splitIterator.next())));
+            criteria.add(Restrictions.not(Restrictions.in(alialize(field), splitIterator.next())));
         }
         return null;
     }
@@ -227,19 +260,31 @@ public class DefaultQuery<T> implements Query<T> {
     @Override
     public Query<T> notIn(String field, Query<?> subQuery, String subField) {
         DetachedCriteria subQueryCriteria = criteriaForSubQuery(subQuery, Projections.property(subField));
-        criteria.add(Subqueries.propertyNotIn(field, subQueryCriteria));
+        criteria.add(Subqueries.propertyNotIn(alialize(field), subQueryCriteria));
+        return this;
+    }
+
+    @Override
+    public Query<T> join(String associated) {
+        if (aliases.containsKey(associated)) {
+            throw new IllegalArgumentException("Already joined on " + associated);
+        }
+
+        String associationAlias = createAlias(associated);
+        String alialized = alialize(associated);
+        criteria.createAlias(alialized, associationAlias);
         return this;
     }
 
     @Override
     public Query<T> orderByAsc(String field) {
-        criteria.addOrder(Order.asc(field));
+        criteria.addOrder(Order.asc(alialize(field)));
         return this;
     }
 
     @Override
     public Query<T> orderByDesc(String field) {
-        criteria.addOrder(Order.desc(field));
+        criteria.addOrder(Order.desc(alialize(field)));
         return this;
     }
 
@@ -253,7 +298,7 @@ public class DefaultQuery<T> implements Query<T> {
 
     @Override
     public long findDistinctRowCount(String field) {
-        criteria.setProjection(Projections.countDistinct(field));
+        criteria.setProjection(Projections.countDistinct(alialize(field)));
         Long count = (Long) executablePlainCriteria().uniqueResult();
         criteria.setProjection(null);
         return count;
@@ -337,6 +382,39 @@ public class DefaultQuery<T> implements Query<T> {
         }
         this.maxRows = maxRows;
         return this;
+    }
+
+    public final String createAlias(String association) {
+        if (aliases.containsKey(association)) {
+            throw new IllegalStateException("There is already an alias for " + association);
+        }
+
+        String newAlias = association.replace(".", "_") + "_" + aliasIndex;
+        aliases.put(association, newAlias);
+        return newAlias;
+    }
+
+    public final String alialize(String field) {
+        if (Strings.isNullOrEmpty(field)) {
+            throw new IllegalArgumentException("field must not be empty");
+        }
+
+        if (!field.contains(".")) {
+            return field;
+        }
+
+        if (aliases.containsKey(field)) {
+            return aliases.get(field);
+        }
+
+        int lastDot = field.lastIndexOf(".");
+        String path = field.substring(0, lastDot);
+        String name = field.substring(lastDot + 1);
+        if (!aliases.containsKey(path)) {
+            throw new IllegalStateException("Cannot alialize " + field + ", first join on " + path);
+        }
+
+        return aliases.get(path) + "." + name;
     }
 
     /**
