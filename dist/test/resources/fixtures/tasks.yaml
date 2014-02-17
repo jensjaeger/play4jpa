@@ -5,24 +5,29 @@
 - Task(task1):
     name: Task 1
     done: false
+    priority: 3
     creator: User(jens)
 
 - Task(task2):
     name: Task 2
     done: false
+    priority: 6
     creator: User(max)
 
 - Task(task3):
     name: Task 3
     done: false
+    priority: 3
     creator: User(tom)
 
 - Task(task4):
     name: Task 4
     done: true
+    priority: 2
     creator: User(jens)
 
 - Task(task5):
     name: jens
     done: false
+    priority: 1
     creator: User(jens)

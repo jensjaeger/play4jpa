@@ -19,6 +19,8 @@ public class Task extends Model<Task> {
 
     public Boolean done;
 
+    public Integer priority;
+
     @ManyToOne
     public User creator;
 
