@@ -1,4 +1,4 @@
-package play.ext.jj.fixy;
+package com.play4jpa.fixy;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.HashMultimap;
@@ -28,9 +28,10 @@ class ConstructImport extends AbstractConstruct {
         this.coreFixy = coreFixy;
     }
 
-    @Override public Object construct(Node node) {
+    @Override
+    public Object construct(Node node) {
         String location = ((ScalarNode) node).getValue();
-        if(!importedPackages.contains(location)) {
+        if (!importedPackages.contains(location)) {
             importedPackages.add(location);
             coreFixy.loadEntities(location);
         }
@@ -45,7 +46,8 @@ class ConstructPackage extends AbstractConstruct {
         this.coreFixy = coreFixy;
     }
 
-    @Override public Object construct(Node node) {
+    @Override
+    public Object construct(Node node) {
         String packageName = ((ScalarNode) node).getValue();
         coreFixy.setPackage(packageName);
         return "";
@@ -54,11 +56,10 @@ class ConstructPackage extends AbstractConstruct {
 
 /**
  * CoreFixy allows you to create Java classes from YAML markup.
- *
  */
 public final class CoreFixy extends CompactConstructor implements Fixy {
     private final Map<String, Object> entityCache = Maps.newLinkedHashMap();
-    private final Multimap<Class<?>, Processor<? super Object>> postProcessors = HashMultimap.create();
+    private final Multimap<Class<?>, Processor<?>> postProcessors = HashMultimap.create();
     private final Persister persister;
     private final String defaultPackage;
     private final BeanAccess beanAccess;
@@ -84,11 +85,12 @@ public final class CoreFixy extends CompactConstructor implements Fixy {
 
     @Override
     protected Class<?> getClassForName(String name) throws ClassNotFoundException {
-        if(!Strings.isNullOrEmpty(packageName)) {
+        if (!Strings.isNullOrEmpty(packageName)) {
             try {
                 return Class.forName(packageName + "." + name, true, play.Play.application().classloader());
                 //return super.getClassForName(packageName + "." + name);
-            } catch (ClassNotFoundException ignored) { }
+            } catch (ClassNotFoundException ignored) {
+            }
         }
         ClassNotFoundException exceptionToThrow;
         try {
@@ -100,13 +102,14 @@ public final class CoreFixy extends CompactConstructor implements Fixy {
         try {
             return Class.forName("java.lang." + name, true, play.Play.application().classloader());
             //return super.getClassForName("java.lang." + name);
-        } catch (ClassNotFoundException ignored) { }
+        } catch (ClassNotFoundException ignored) {
+        }
         throw exceptionToThrow;
     }
 
     @Override
     protected Object createInstance(ScalarNode node, CompactData data) throws Exception {
-        if(!entityCache.containsKey(node.getValue())) {
+        if (!entityCache.containsKey(node.getValue())) {
             data.getArguments().clear();
             Object entity = super.createInstance(node, data);
             entityCache.put(node.getValue(), entity);
@@ -117,8 +120,8 @@ public final class CoreFixy extends CompactConstructor implements Fixy {
     void loadEntities(String... files) {
         Yaml yaml = new Yaml(this);
         yaml.setBeanAccess(beanAccess);
-        for(String file : files) {
-            if(!file.startsWith("/")) {
+        for (String file : files) {
+            if (!file.startsWith("/")) {
                 file = "/" + file;
             }
             String origPackage = this.packageName;
@@ -130,12 +133,12 @@ public final class CoreFixy extends CompactConstructor implements Fixy {
     }
 
     void persistEntities() {
-        Queue<Object> processQueue = new LinkedList<Object>(entityCache.values());
-        while(!processQueue.isEmpty()) {
+        Queue<Object> processQueue = new LinkedList<>(entityCache.values());
+        while (!processQueue.isEmpty()) {
             Object entity = processQueue.remove();
-            for(Map.Entry<Class<?>, Processor<? super Object>> entry : postProcessors.entries()) {
-                if(entity.getClass().isAssignableFrom(entry.getKey())) {
-                    Processor<? super Object> postProcessor = entry.getValue();
+            for (Map.Entry<Class<?>, Processor<?>> entry : postProcessors.entries()) {
+                if (entity.getClass().isAssignableFrom(entry.getKey())) {
+                    Processor postProcessor = entry.getValue();
                     postProcessor.processQueue = processQueue;
                     postProcessor.process(entity);
                 }
@@ -144,16 +147,15 @@ public final class CoreFixy extends CompactConstructor implements Fixy {
         }
     }
 
+    @Override
     public void load(String... files) {
         loadEntities(files);
         persistEntities();
     }
 
+    @Override
     public <T> void addProcessor(Processor<T> postProcessor) {
-        //TODO: get the generic type of postProcessors right
-        @SuppressWarnings("unchecked")
-        Processor<? super Object> casted = (Processor<? super Object>) postProcessor;
-        postProcessors.put(postProcessor.getType(), casted);
+        postProcessors.put(postProcessor.getType(), postProcessor);
     }
 
     void setPackage(String packageName) {

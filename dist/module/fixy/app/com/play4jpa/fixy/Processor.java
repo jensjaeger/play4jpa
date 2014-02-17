@@ -1,4 +1,4 @@
-package play.ext.jj.fixy;
+package com.play4jpa.fixy;
 
 import java.util.Queue;
 

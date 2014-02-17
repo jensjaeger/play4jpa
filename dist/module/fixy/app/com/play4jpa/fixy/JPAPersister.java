@@ -1,4 +1,4 @@
-package play.ext.jj.fixy;
+package com.play4jpa.fixy;
 
 import javax.persistence.Entity;
 import javax.persistence.EntityManager;
@@ -16,7 +16,7 @@ class JPAPersister implements Persister {
         this.entityManager = entityManager;
         this.mergeEntities = mergeEntities;
     }
-    
+
     public void persist(Object entity) {
         if (entity.getClass().isAnnotationPresent(Entity.class)) {
             if (mergeEntities) {

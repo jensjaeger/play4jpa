@@ -1,4 +1,4 @@
-package play.ext.jj.fixy;
+package com.play4jpa.fixy;
 
 import org.yaml.snakeyaml.introspector.BeanAccess;
 
@@ -64,9 +64,9 @@ public class JpaFixyBuilder {
      */
     public Fixy build() {
         return new CoreFixy(
-            new JPAPersister(entityManager, mergeEntities),
-            defaultPackage,
-            beanAccess);
+                new JPAPersister(entityManager, mergeEntities),
+                defaultPackage,
+                beanAccess);
     }
 
 }

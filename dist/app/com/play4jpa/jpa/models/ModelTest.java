@@ -1,9 +1,9 @@
 package com.play4jpa.jpa.models;
 
+import com.play4jpa.fixy.Fixy;
+import com.play4jpa.fixy.JpaFixyBuilder;
 import play.Logger;
 import play.db.jpa.JPA;
-import play.ext.jj.fixy.Fixy;
-import play.ext.jj.fixy.JpaFixyBuilder;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
