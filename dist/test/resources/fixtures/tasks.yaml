@@ -10,7 +10,7 @@
 
 - Task(task2):
     name: Task 2
-    done: false
+    done:
     priority: 6
     creator: User(max)
 
@@ -24,7 +24,7 @@
     name: Task 4
     done: true
     priority: 2
-    creator: User(jens)
+    creator:
 
 - Task(task5):
     name: jens

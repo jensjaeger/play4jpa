@@ -33,7 +33,7 @@ public class FinderTest extends TestBase {
                     task1Found = true;
                     break;
                 case "Task 2":
-                    assertFalse(t.done);
+                    assertNull(t.done);
                     assertEquals("max", t.creator.name);
                     task2Found = true;
                     break;
@@ -44,7 +44,7 @@ public class FinderTest extends TestBase {
                     break;
                 case "Task 4":
                     assertTrue(t.done);
-                    assertEquals("jens", t.creator.name);
+                    assertNull(t.creator);
                     task4Found = true;
                     break;
                 case "jens":

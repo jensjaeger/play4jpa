@@ -235,13 +235,13 @@ public interface Query<T> {
      */
     Query<T> join(String association);
 
-    /*Query<T> leftJoin(String associated);
-
-    Query<T> join(String associated);
-
-    Query<T> exists(Query<T> subQuery);
-
-    Query<T> notExists(Query<T> subQuery);*/
+    /**
+     * Add a left outer join on the given association (entity role).
+     *
+     * @param association Name of the association
+     * @return this (for method chaining)
+     */
+    Query<T> leftJoin(String association);
 
     /**
      * Order query ascending by field.
@@ -288,7 +288,7 @@ public interface Query<T> {
      * Get entity by employing a natural ID.
      *
      * @param field Field to use for natural ID
-     * @param id ID
+     * @param id    ID
      * @return Entity for natural ID
      */
     T byNaturalId(String field, Object id);

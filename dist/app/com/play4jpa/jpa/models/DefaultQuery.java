@@ -9,6 +9,7 @@ import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.criterion.*;
 import org.hibernate.ejb.HibernateEntityManager;
+import org.hibernate.sql.JoinType;
 import play.db.jpa.JPA;
 
 import java.util.*;
@@ -53,13 +54,13 @@ public class DefaultQuery<T> implements Query<T> {
      */
     private final int aliasIndex;
     /**
-     * Currently active alias
-     */
-    //private final String activeAlias;
-    /**
      * Map of entity class to used alias
      */
     private final LinkedHashMap<String, String> aliases = Maps.newLinkedHashMap();
+    /**
+     * Indicates whether an ORDER BY clause is present
+     */
+    private boolean hasOrder = false;
     /**
      * Accumulated criteria for query.
      */
@@ -182,7 +183,8 @@ public class DefaultQuery<T> implements Query<T> {
 
     @Override
     public Query<T> leProperty(String field1, String field2) {
-        throw new UnsupportedOperationException();
+        criteria.add(Restrictions.leProperty(alialize(field1), alialize(field2)));
+        return this;
     }
 
     @Override
@@ -193,7 +195,8 @@ public class DefaultQuery<T> implements Query<T> {
 
     @Override
     public Query<T> ltProperty(String field1, String field2) {
-        throw new UnsupportedOperationException();
+        criteria.add(Restrictions.ltProperty(alialize(field1), alialize(field2)));
+        return this;
     }
 
     @Override
@@ -257,7 +260,8 @@ public class DefaultQuery<T> implements Query<T> {
         while (splitIterator.hasNext()) {
             criteria.add(Restrictions.not(Restrictions.in(alialize(field), splitIterator.next())));
         }
-        return null;
+
+        return this;
     }
 
     @Override
@@ -280,19 +284,37 @@ public class DefaultQuery<T> implements Query<T> {
     }
 
     @Override
+    public Query<T> leftJoin(String association) {
+        if (aliases.containsKey(association)) {
+            throw new IllegalArgumentException("Already joined on " + association);
+        }
+
+        String associationAlias = createAlias(association);
+        String alialized = alialize(association);
+        criteria.createAlias(alialized, associationAlias, JoinType.LEFT_OUTER_JOIN);
+        return this;
+    }
+
+    @Override
     public Query<T> orderByAsc(String field) {
+        hasOrder = true;
         criteria.addOrder(Order.asc(alialize(field)));
         return this;
     }
 
     @Override
     public Query<T> orderByDesc(String field) {
+        hasOrder = true;
         criteria.addOrder(Order.desc(alialize(field)));
         return this;
     }
 
     @Override
     public long findRowCount() {
+        if (hasOrder) {
+            throw new IllegalStateException("Cannot count rows when ORDER BY is present");
+        }
+
         criteria.setProjection(Projections.rowCount());
         Long count = (Long) executablePlainCriteria().uniqueResult();
         criteria.setProjection(null);
@@ -301,6 +323,10 @@ public class DefaultQuery<T> implements Query<T> {
 
     @Override
     public long findDistinctRowCount(String field) {
+        if (hasOrder) {
+            throw new IllegalStateException("Cannot count rows when ORDER BY is present");
+        }
+
         criteria.setProjection(Projections.countDistinct(alialize(field)));
         Long count = (Long) executablePlainCriteria().uniqueResult();
         criteria.setProjection(null);
