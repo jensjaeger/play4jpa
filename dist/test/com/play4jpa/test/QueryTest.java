@@ -40,12 +40,21 @@ public class QueryTest extends TestBase {
     }
 
     @Test
-    public void eqPropertyTest() {
+    public void joinAndEqPropertyTest() {
         Task t = Task.find.query().join("creator").eqProperty("name", "creator.name").findUnique();
         assertNotNull(t);
         assertFalse(t.done);
         assertEquals("jens", t.name);
         assertEquals("jens", t.creator.name);
+    }
+
+    @Test
+    public void joinAndEqTest() {
+        Task t = Task.find.query().join("creator").eq("creator.name", "tom").findUnique();
+        assertNotNull(t);
+        assertFalse(t.done);
+        assertEquals("Task 3", t.name);
+        assertEquals("tom", t.creator.name);
     }
 
 }

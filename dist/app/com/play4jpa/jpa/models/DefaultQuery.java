@@ -101,7 +101,7 @@ public class DefaultQuery<T> implements Query<T> {
      *
      * @return Alias index for query
      */
-    private static synchronized final int getNewAliasIndex() {
+    private static synchronized int getNewAliasIndex() {
         if (globalAliasIndex == MAX_ALIAS_INDEX) {
             globalAliasIndex = 1;
         } else {
@@ -265,13 +265,13 @@ public class DefaultQuery<T> implements Query<T> {
     }
 
     @Override
-    public Query<T> join(String associated) {
-        if (aliases.containsKey(associated)) {
-            throw new IllegalArgumentException("Already joined on " + associated);
+    public Query<T> join(String association) {
+        if (aliases.containsKey(association)) {
+            throw new IllegalArgumentException("Already joined on " + association);
         }
 
-        String associationAlias = createAlias(associated);
-        String alialized = alialize(associated);
+        String associationAlias = createAlias(association);
+        String alialized = alialize(association);
         criteria.createAlias(alialized, associationAlias);
         return this;
     }

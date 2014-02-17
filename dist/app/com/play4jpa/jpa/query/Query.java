@@ -228,12 +228,12 @@ public interface Query<T> {
     Query<T> notIn(String field, Query<?> subQuery, String subField);
 
     /**
-     * Add a inner join on the given entity class. All subsequent restriction methods will operate on this entity.
+     * Add a inner join on the given association (entity role).
      *
-     * @param associated Associated entity type
+     * @param association Name of the association
      * @return this (for method chaining)
      */
-    Query<T> join(String associated);
+    Query<T> join(String association);
 
     /*Query<T> leftJoin(String associated);
 
