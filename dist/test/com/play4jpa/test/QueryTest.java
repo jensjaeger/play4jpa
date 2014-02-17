@@ -39,9 +39,9 @@ public class QueryTest extends TestBase {
         assertEquals(tom, t.creator);
     }
 
-    //@Test
+    @Test
     public void eqPropertyTest() {
-        Task t = Task.find.query().eqProperty("name", "creator.name").findUnique();
+        Task t = Task.find.query().join("creator").eqProperty("name", "creator.name").findUnique();
         assertNotNull(t);
         assertFalse(t.done);
         assertEquals("jens", t.name);
