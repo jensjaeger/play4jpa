@@ -5,6 +5,8 @@ import com.play4jpa.test.models.User;
 import org.hibernate.NonUniqueResultException;
 import org.junit.Test;
 
+import java.util.List;
+
 import static org.junit.Assert.*;
 
 /**
@@ -55,6 +57,48 @@ public class QueryTest extends TestBase {
         assertFalse(t.done);
         assertEquals("Task 3", t.name);
         assertEquals("tom", t.creator.name);
+    }
+
+    @Test
+    public void ieqTest() {
+        Task t = Task.find.query().ieq("name", "task 1").findUnique();
+        assertNotNull(t);
+        assertEquals("Task 1", t.name);
+    }
+
+    @Test
+    public void neTest() {
+        List<Task> tasks = Task.find.query().ne("name", "Task 1").findList();
+        assertEquals(NUM_DEFAULT_TASKS - 1, tasks.size());
+
+        for (Task t : tasks) {
+            assertNotEquals("Task 1", t.name);
+        }
+
+        Task t = Task.find.query().ne("done", false).findUnique();
+        assertNotNull(t);
+        assertEquals("Task 4", t.name);
+        assertTrue(t.done);
+    }
+
+    @Test
+    public void nePropertyTest() {
+        List<Task> tasks = Task.find.query().join("creator").neProperty("name", "creator.name").findList();
+        assertEquals(NUM_DEFAULT_TASKS - 1, tasks.size());
+
+        for (Task t : tasks) {
+            assertNotEquals("jens", t.name);
+        }
+    }
+
+    @Test
+    public void ilikeTest() {
+        List<Task> tasks = Task.find.query().ilike("name", "%ask%").findList();
+        assertEquals(NUM_DEFAULT_TASKS - 1, tasks.size());
+
+        for (Task t : tasks) {
+            assertTrue(t.name.startsWith("Task"));
+        }
     }
 
 }

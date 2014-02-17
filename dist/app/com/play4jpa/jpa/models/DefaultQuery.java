@@ -140,7 +140,8 @@ public class DefaultQuery<T> implements Query<T> {
 
     @Override
     public Query<T> neProperty(String field1, String field2) {
-        throw new UnsupportedOperationException();
+        criteria.add(Restrictions.neProperty(alialize(field1), alialize(field2)));
+        return this;
     }
 
     @Override
