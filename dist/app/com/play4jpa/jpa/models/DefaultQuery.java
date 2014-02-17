@@ -158,7 +158,8 @@ public class DefaultQuery<T> implements Query<T> {
 
     @Override
     public Query<T> geProperty(String field1, String field2) {
-        throw new UnsupportedOperationException();
+        criteria.add(Restrictions.geProperty(alialize(field1), alialize(field2)));
+        return this;
     }
 
     @Override
@@ -169,7 +170,8 @@ public class DefaultQuery<T> implements Query<T> {
 
     @Override
     public Query<T> gtProperty(String field1, String field2) {
-        throw new UnsupportedOperationException();
+        criteria.add(Restrictions.gtProperty(alialize(field1), alialize(field2)));
+        return this;
     }
 
     @Override

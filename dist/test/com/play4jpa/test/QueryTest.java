@@ -101,4 +101,44 @@ public class QueryTest extends TestBase {
         }
     }
 
+    @Test
+    public void geTest() {
+        List<Task> tasks = Task.find.query().ge("priority", 3).findList();
+        assertEquals(3, tasks.size());
+
+        for (Task t : tasks) {
+            assertTrue(t.priority >= 3);
+        }
+    }
+
+    @Test
+    public void gePropertyTest() {
+        List<Task> tasks = Task.find.query().join("creator").geProperty("priority", "creator.defaultPriority").findList();
+        assertEquals(3, tasks.size());
+
+        for (Task t : tasks) {
+            assertTrue(t.priority >= t.creator.defaultPriority);
+        }
+    }
+
+    @Test
+    public void gtTest() {
+        List<Task> tasks = Task.find.query().gt("priority", 3).findList();
+        assertEquals(1, tasks.size());
+
+        for (Task t : tasks) {
+            assertTrue(t.priority > 3);
+        }
+    }
+
+    @Test
+    public void gtPropertyTest() {
+        List<Task> tasks = Task.find.query().join("creator").gtProperty("priority", "creator.defaultPriority").findList();
+        assertEquals(2, tasks.size());
+
+        for (Task t : tasks) {
+            assertTrue(t.priority > t.creator.defaultPriority);
+        }
+    }
+
 }
