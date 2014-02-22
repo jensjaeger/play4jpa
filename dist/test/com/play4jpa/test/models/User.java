@@ -16,6 +16,8 @@ public class User extends Model<User> {
 
     public Integer defaultPriority;
 
+    public Integer age;
+
     public static Finder<String, User> find = new Finder<>(String.class, User.class);
 
 }

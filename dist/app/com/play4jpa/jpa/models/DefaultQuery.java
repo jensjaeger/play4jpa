@@ -12,6 +12,9 @@ import org.hibernate.ejb.HibernateEntityManager;
 import org.hibernate.sql.JoinType;
 import play.db.jpa.JPA;
 
+import javax.persistence.EmbeddedId;
+import javax.persistence.Entity;
+import javax.persistence.Id;
 import java.util.*;
 
 /**
@@ -368,6 +371,14 @@ public class DefaultQuery<T> implements Query<T> {
         setFirstResult(0);
         setMaxRows(0);
         return result;
+    }
+
+    @Override
+    public int findMaxValue(String field) {
+        criteria.setProjection(Projections.max(field));
+        final Integer result = (Integer)executablePlainCriteria().uniqueResult();
+        criteria.setProjection(null);
+        return result != null ? result.intValue() : 0 ;
     }
 
     @Override

@@ -4,13 +4,16 @@
     name: jens
     defaultPriority: 2
     email: mail@jensjaeger.com
+    age: 30
 
 - User(max):
     name: max
     defaultPriority: 3
     email: max@mail.xxx
+    age: 3
 
 - User(tom):
     name: tom
     defaultPriority: 4
     email: tom@mail.xxx
+    age: 1

@@ -3,10 +3,8 @@ package com.play4jpa.test.models;
 import com.play4jpa.jpa.models.Finder;
 import com.play4jpa.jpa.models.Model;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.ManyToOne;
+import javax.persistence.*;
+import java.util.Set;
 
 @Entity
 public class Task extends Model<Task> {
@@ -23,6 +21,9 @@ public class Task extends Model<Task> {
 
     @ManyToOne
     public User creator;
+
+    @ManyToMany
+    public Set<User> assignees;
 
     public static Finder<Long, Task> find = new Finder<>(Long.class, Task.class);
 

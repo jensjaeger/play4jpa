@@ -7,12 +7,17 @@
     done: false
     priority: 3
     creator: User(jens)
+    assignees:
+      - User(max)
+      - User(tom)
 
 - Task(task2):
     name: Task 2
     done:
     priority: 6
     creator: User(max)
+    assignees:
+      - User(max)
 
 - Task(task3):
     name: Task 3

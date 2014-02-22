@@ -23,6 +23,7 @@ object ApplicationBuild extends Build {
 
   val main = play.Project(appName, appVersion, appDependencies).settings(
     javaOptions in Test += "-Dconfig.file=test/resources/test.conf"
-  ).dependsOn(fixy).aggregate(fixy)
+
+    ).dependsOn(fixy).aggregate(fixy)
 
 }

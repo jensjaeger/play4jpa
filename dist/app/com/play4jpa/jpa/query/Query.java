@@ -344,6 +344,16 @@ public interface Query<T> {
     PagedQueryIterator<T> findPagedIterator(int startPage, int pageSize);
 
     /**
+     * SELECT MAX(field) FROM table_name;
+     *
+     * This method only works for int fields at the moment.
+     *
+     * @param field
+     * @return the MAX value of the given field in query
+     */
+    public int findMaxValue(String field);
+
+    /**
      * Get the current criteria to access them directly.
      *
      * @return Current criteria
