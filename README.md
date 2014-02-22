@@ -11,9 +11,9 @@ This module should help you work with JPA instead of Ebean as your ORM layer. It
 
 Whats included
 --------------
-Better @Transactional annotations (http://www.jensjaeger.com/2013/11/replace-play-transactional-with-something-better/)
-A generic helper for database related tests with play 2 and JPA (http://www.jensjaeger.com/2013/12/a-ebean-like-finder-for-jpa/)
-A Ebean like finder for JPA (http://www.jensjaeger.com/2013/12/a-ebean-like-finder-for-jpa/)
+* Better @Transactional annotations (http://www.jensjaeger.com/2013/11/replace-play-transactional-with-something-better/)
+* A generic helper for database related tests with play 2 and JPA (http://www.jensjaeger.com/2013/12/a-ebean-like-finder-for-jpa/)
+* A Ebean like finder for JPA (http://www.jensjaeger.com/2013/12/a-ebean-like-finder-for-jpa/)
 
 How to use
 ----------
