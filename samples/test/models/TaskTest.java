@@ -1,9 +1,9 @@
 package models;
 
+import com.play4jpa.jpa.test.ModelTest;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import play.ext.jj.jpa.test.ModelTest;
 import play.test.FakeApplication;
 import play.test.Helpers;
 

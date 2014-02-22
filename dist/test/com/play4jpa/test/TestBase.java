@@ -1,7 +1,7 @@
 package com.play4jpa.test;
 
 import com.google.common.collect.Lists;
-import com.play4jpa.jpa.models.ModelTest;
+import com.play4jpa.jpa.test.ModelTest;
 import org.junit.After;
 import org.junit.Before;
 import play.test.FakeApplication;

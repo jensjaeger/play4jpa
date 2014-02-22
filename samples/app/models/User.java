@@ -1,9 +1,12 @@
 package models;
 
-import play.ext.jj.jpa.models.Model;
-import play.ext.jj.jpa.query.Query;
+
+import com.play4jpa.jpa.models.Finder;
+import com.play4jpa.jpa.models.Model;
+import com.play4jpa.jpa.query.Query;
 
 import javax.persistence.Entity;
+import javax.persistence.Id;
 
 /**
  * The User
@@ -13,15 +16,19 @@ import javax.persistence.Entity;
 @Entity
 public class User extends Model<User> {
 
-    public String name;
-
+    @Id
     public String email;
 
+    public String name;
+
     public static Query<User> query() {
-        return query(User.class);
+        return find.query();
     }
 
     public static User findByEmail(String email) {
         return query().eq("email", email).findUnique();
     }
+
+    public static Finder<String, User> find = new Finder<>(String.class, User.class);
+
 }

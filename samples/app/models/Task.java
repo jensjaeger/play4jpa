@@ -1,10 +1,13 @@
 package models;
 
+import com.play4jpa.jpa.models.Finder;
+import com.play4jpa.jpa.models.Model;
+import com.play4jpa.jpa.query.Query;
 import play.db.jpa.JPA;
-import play.ext.jj.jpa.models.Model;
-import play.ext.jj.jpa.query.Query;
 
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import java.util.List;
 
@@ -15,6 +18,10 @@ import java.util.List;
  */
 @Entity(name = "tasks")
 public class Task extends Model<Task> {
+
+    @GeneratedValue
+    @Id
+    public Long id;
 
     //@Column(unique=true)
     public String name;
@@ -34,7 +41,7 @@ public class Task extends Model<Task> {
     }
 
     public static Query<Task> query(){
-        return query(Task.class);
+        return find.query();
     }
 
     public static Task findByName(String name){
@@ -48,4 +55,7 @@ public class Task extends Model<Task> {
     public static List<Task> findAll(){
         return Task.query().findList();
     }
+
+    public static Finder<Long, Task> find = new Finder<>(Long.class, Task.class);
+
 }
